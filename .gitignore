@@ -245,9 +245,3 @@ FakesAssemblies/
 /.vs/config/applicationhost.config
 /data/happypanda.db
 /main.spec
-.idea/dbnavigator.xml
-.idea/workspace.xml
-.idea/vcs.xml
-.idea/modules.xml
-.idea/misc.xml
-.idea/happypanda.iml

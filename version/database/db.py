@@ -1,27 +1,21 @@
-"""
-    This file is part of Happypanda.
-    Happypanda is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 2 of the License, or
-    any later version.
-    Happypanda is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License
-    along with Happypanda.  If not, see <http://www.gnu.org/licenses/>.
-"""
+#"""
+#This file is part of Happypanda.
+#Happypanda is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 2 of the License, or
+#any later version.
+#Happypanda is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+#You should have received a copy of the GNU General Public License
+#along with Happypanda.  If not, see <http://www.gnu.org/licenses/>.
+#"""
 
-import os
-import sqlite3
-import threading
-import queue
-import logging
-import time
-import shutil
+import os, sqlite3, threading, queue
+import logging, time, shutil
 
 from . import db_constants
-
 log = logging.getLogger(__name__)
 log_i = log.info
 log_d = log.debug
@@ -29,57 +23,42 @@ log_w = log.warning
 log_e = log.error
 log_c = log.critical
 
-
 def series_ns_sql(cols=False):
-    sql = "CREATE TABLE IF NOT EXISTS series_ns\n("
+    sql ="CREATE TABLE IF NOT EXISTS series_ns("
 
     col_list = [
         'ns_id INTEGER PRIMARY KEY',
         "ns_title TEXT NOT NULL DEFAULT ''",
         "ns_profile BLOB",
-        "ns_date TEXT"
+        "ns_date TEXT",
         ]
 
     for x, s in enumerate(col_list):
-        if x == 0:
-            sql += "\n\t" + s + ',\n'
-        elif x < len(col_list) - 1:
-            sql += "\t" + s + ',\n'
-        else:
-            sql += "\t" + s
-
-    sql += "\n);"
-
+        if x != len(col_list) - 1:
+            sql += s + ','
+    sql += ");"
     if cols:
         return sql, col_list
     return sql
 
-
-def circle_sql(cols=False):
-    sql = "CREATE TABLE IF NOT EXISTS circles\n("
+def cirlce_sql(cols=False):
+    sql ="CREATE TABLE IF NOT EXISTS circles("
 
     col_list = [
         'circle_id INTEGER PRIMARY KEY',
-        "name TEXT NOT NULL DEFAULT ''"
+        "name TEXT NOT NULL DEFAULT ''",
         ]
 
     for x, s in enumerate(col_list):
-        if x == 0:
-            sql += "\n\t" + s + ',\n'
-        elif x < len(col_list) - 1:
-            sql += "\t" + s + ',\n'
-        else:
-            sql += "\t" + s
-
-    sql += "\n);"
-
+        if x != len(col_list) - 1:
+            sql += s + ','
+    sql += ");"
     if cols:
         return sql, col_list
     return sql
 
-
 def artist_sql(cols=False):
-    sql = "CREATE TABLE IF NOT EXISTS artists\n("
+    sql ="CREATE TABLE IF NOT EXISTS artists("
 
     col_list = [
         'artist_id INTEGER PRIMARY KEY',
@@ -89,47 +68,39 @@ def artist_sql(cols=False):
         ]
 
     for x, s in enumerate(col_list):
-        if x == 0:
-            sql += "\n\t" + s + ',\n'
-        elif x < len(col_list) - 1:
-            sql += "\t" + s + ',\n'
-        else:
-            sql += "\t" + s
-
-    sql += "\n);"
-
+        if x != len(col_list) - 1:
+            sql += s + ','
+    sql += ");"
     if cols:
         return sql, col_list
     return sql
-
 
 def hashes_sql(cols=False):
-    sql = """CREATE TABLE IF NOT EXISTS hashes\n(
-    hash_id INTEGER PRIMARY KEY,
-    hash BLOB,
-    series_id INTEGER,
-    chapter_id INTEGER,
-    page INTEGER,
-    FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE,
-    FOREIGN KEY(chapter_id) REFERENCES chapters(chapter_id) ON DELETE CASCADE,
-    UNIQUE(hash, series_id, chapter_id, page)\n);"""
+    sql = """
+        CREATE TABLE IF NOT EXISTS hashes(
+                    hash_id INTEGER PRIMARY KEY,
+                    hash BLOB,
+                    series_id INTEGER,
+                    chapter_id INTEGER,
+                    page INTEGER,
+                    FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE,
+                    FOREIGN KEY(chapter_id) REFERENCES chapters(chapter_id) ON DELETE CASCADE,
+                    UNIQUE(hash, series_id, chapter_id, page));
+    """
 
     col_list = [
-        'hash_id INTEGER PRIMARY KEY',
-        'hash BLOB',
-        'series_id INTEGER',
-        'chapter_id INTEGER',
-        'page INTEGER'
+    'hash_id INTEGER PRIMARY KEY',
+    'hash BLOB',
+    'series_id INTEGER',
+    'chapter_id INTEGER',
+    'page INTEGER'
     ]
-
     if cols:
         return sql, col_list
     return sql
 
-
 def series_sql(cols=False):
-    sql = "CREATE TABLE IF NOT EXISTS series\n("
-
+    sql = "CREATE TABLE IF NOT EXISTS series("
     col_list = [
         'series_id INTEGER PRIMARY KEY',
         'ns_id INTEGER',
@@ -154,35 +125,28 @@ def series_sql(cols=False):
         'db_v REAL',
         'view INTEGER DEFAULT 1',
         "FOREIGN KEY(artist_id) REFERENCES artists(artist_id)",
-        "FOREIGN KEY(ns_id) REFERENCES series_ns(ns_id)"
+        "FOREIGN KEY(ns_id) REFERENCES series_ns(ns_id)",
         ]
-
     for x, s in enumerate(col_list):
-        if x == 0:
-            sql += "\n\t" + s + ',\n'
-        elif x < len(col_list) - 1:
-            sql += "\t" + s + ',\n'
-        else:
-            sql += "\t" + s
-
-    sql += "\n);"
-
+        if x != len(col_list) - 1:
+            sql += s + ','
+    sql += ");"
     if cols:
         return sql, col_list
     return sql
 
-
 def chapters_sql(cols=False):
-    sql = """CREATE TABLE IF NOT EXISTS chapters\n(
-    chapter_id INTEGER PRIMARY KEY,
-    series_id INTEGER,
-    chapter_title TEXT NOT NULL DEFAULT '',
-    chapter_number INTEGER,
-    chapter_path BLOB,
-    pages INTEGER,
-    in_archive INTEGER,
-    FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE\n);"""
-
+    sql = """
+        CREATE TABLE IF NOT EXISTS chapters(
+                    chapter_id INTEGER PRIMARY KEY,
+                    series_id INTEGER,
+                    chapter_title TEXT NOT NULL DEFAULT '',
+                    chapter_number INTEGER,
+                    chapter_path BLOB,
+                    pages INTEGER,
+                    in_archive INTEGER,
+                    FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE);
+        """
     col_list = [
         'chapter_id INTEGER PRIMARY KEY',
         'series_id INTEGER',
@@ -190,85 +154,78 @@ def chapters_sql(cols=False):
         'chapter_number INTEGER',
         'chapter_path BLOB',
         'pages INTEGER',
-        'in_archive INTEGER'
+        'in_archive INTEGER',
         ]
-
     if cols:
         return sql, col_list
     return sql
 
-
 def namespaces_sql(cols=False):
-    sql = """CREATE TABLE IF NOT EXISTS namespaces\n(
-    namespace_id INTEGER PRIMARY KEY,
-    namespace TEXT NOT NULL UNIQUE\n);"""
-
+    sql = """
+        CREATE TABLE IF NOT EXISTS namespaces(
+                    namespace_id INTEGER PRIMARY KEY,
+                    namespace TEXT NOT NULL UNIQUE);
+        """
     col_list = [
         'namespace_id INTEGER PRIMARY KEY',
         'namespace TEXT NOT NULL UNIQUE'
         ]
-
     if cols:
         return sql, col_list
     return sql
 
-
 def tags_sql(cols=False):
-    sql = """CREATE TABLE IF NOT EXISTS tags\n(
-    tag_id INTEGER PRIMARY KEY,
-    tag TEXT NOT NULL UNIQUE\n);"""
-
+    sql = """
+        CREATE TABLE IF NOT EXISTS tags(
+                    tag_id INTEGER PRIMARY KEY,
+                    tag TEXT NOT NULL UNIQUE);
+        """
     col_list = [
         'tag_id INTEGER PRIMARY KEY',
         'tag TEXT NOT NULL UNIQUE'
         ]
-
     if cols:
         return sql, col_list
     return sql
 
-
 def tags_mappings_sql(cols=False):
-    sql = """CREATE TABLE IF NOT EXISTS tags_mappings\n(
-    tags_mappings_id INTEGER PRIMARY KEY,
-    namespace_id INTEGER,
-    tag_id INTEGER,
-    FOREIGN KEY(namespace_id) REFERENCES namespaces(namespace_id) ON DELETE CASCADE,
-    FOREIGN KEY(tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE,
-    UNIQUE(namespace_id, tag_id)\n);"""
-
+    sql ="""
+        CREATE TABLE IF NOT EXISTS tags_mappings(
+                    tags_mappings_id INTEGER PRIMARY KEY,
+                    namespace_id INTEGER,
+                    tag_id INTEGER,
+                    FOREIGN KEY(namespace_id) REFERENCES namespaces(namespace_id) ON DELETE CASCADE,
+                    FOREIGN KEY(tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE,
+                    UNIQUE(namespace_id, tag_id));
+        """
     col_list = [
         'tags_mappings_id INTEGER PRIMARY KEY',
         'namespace_id INTEGER',
         'tag_id INTEGER'
         ]
-
     if cols:
         return sql, col_list
     return sql
 
-
 def series_tags_mappings_sql(cols=False):
-    sql = """CREATE TABLE IF NOT EXISTS series_tags_map\n(
-    series_id INTEGER,
-    tags_mappings_id INTEGER,
-    FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE,
-    FOREIGN KEY(tags_mappings_id) REFERENCES tags_mappings(tags_mappings_id) ON DELETE CASCADE,
-    UNIQUE(series_id, tags_mappings_id)\n);"""
-
+    sql ="""
+        CREATE TABLE IF NOT EXISTS series_tags_map(
+                    series_id INTEGER,
+                    tags_mappings_id INTEGER,
+                    FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE,
+                    FOREIGN KEY(tags_mappings_id) REFERENCES tags_mappings(tags_mappings_id) ON DELETE CASCADE,
+                    UNIQUE(series_id, tags_mappings_id));
+        """
     col_list = [
         'series_id INTEGER',
         'tags_mappings_id INTEGER'
         ]
-
     if cols:
         return sql, col_list
     return sql
 
-
 def list_sql(cols=False):
-    sql = "CREATE TABLE IF NOT EXISTS list\n("
-
+    sql ="CREATE TABLE IF NOT EXISTS list("
     col_list = [
         'list_id INTEGER PRIMARY KEY',
         "list_name TEXT NOT NULL DEFAULT ''",
@@ -278,48 +235,35 @@ def list_sql(cols=False):
         "enforce INTEGER DEFAULT 0",
         "regex INTEGER DEFAULT 0",
         "l_case INTEGER DEFAULT 0",
-        "strict INTEGER DEFAULT 0"
+        "strict INTEGER DEFAULT 0",
         ]
-
     for x, s in enumerate(col_list):
-        if x == 0:
-            sql += "\n\t" + s + ',\n'
-        elif x < len(col_list) - 1:
-            sql += "\t" + s + ',\n'
-        else:
-            sql += "\t" + s
-
-    sql += "\n);"
-
+        if x != len(col_list) - 1:
+            sql += s + ','
+    sql += ");"
     if cols:
         return sql, col_list
     return sql
 
-
 def series_list_map_sql(cols=False):
-    sql = """CREATE TABLE IF NOT EXISTS series_list_map\n(
-    list_id INTEGER NOT NULL,
-    series_id INTEGER INTEGER NOT NULL,
-    FOREIGN KEY(list_id) REFERENCES list(list_id) ON DELETE CASCADE,
-    FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE,
-    UNIQUE(list_id, series_id)\n);"""
-
+    sql ="""
+        CREATE TABLE IF NOT EXISTS series_list_map(
+                    list_id INTEGER NOT NULL,
+                    series_id INTEGER INTEGER NOT NULL,
+                    FOREIGN KEY(list_id) REFERENCES list(list_id) ON DELETE CASCADE,
+                    FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE,
+                    UNIQUE(list_id, series_id));
+        """
     col_list = [
         'list_id INTEGER NOT NULL',
         'series_id INTEGER INTEGER NOT NULL',
         ]
-
     if cols:
         return sql, col_list
     return sql
 
-STRUCTURE_SCRIPT = "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(series_ns_sql(), circle_sql(),
-                                                                           artist_sql(), series_sql(),
-                                                                           chapters_sql(), namespaces_sql(),
-                                                                           tags_sql(), tags_mappings_sql(),
-                                                                           series_tags_mappings_sql(), hashes_sql(),
-                                                                           list_sql(), series_list_map_sql())
-
+STRUCTURE_SCRIPT = series_ns_sql()+cirlce_sql()+artist_sql()+series_sql()+chapters_sql()+namespaces_sql()+tags_sql()+tags_mappings_sql()+\
+    series_tags_mappings_sql()+hashes_sql()+list_sql()+series_list_map_sql()
 
 def global_db_convert(conn):
     """
@@ -329,7 +273,7 @@ def global_db_convert(conn):
     log_i('Converting tables')
     c = conn.cursor()
     series_ns, series_ns_cols = series_ns_sql(True)
-    circle, circle_cols = circle_sql(True)
+    circle, circle_cols = cirlce_sql(True)
     artist, artist_cols = artist_sql(True)
     series, series_cols = series_sql(True)
     chapters, chapters_cols = chapters_sql(True)
@@ -341,20 +285,19 @@ def global_db_convert(conn):
     _list, list_cols = list_sql(True)
     series_list_map, series_list_map_cols = series_list_map_sql(True)
     
-    t_d = {
-        'series_ns': series_ns_cols,
-        'circles': circle_cols,
-        'artists': artist_cols,
-        'series': series_cols,
-        'chapters': chapters_cols,
-        'namespaces': namespaces_cols,
-        'tags': tags_cols,
-        'tags_mappings': tags_mappings_cols,
-        'series_tags_mappings': series_tags_mappings_cols,
-        'hashes': hashes_cols,
-        'list': list_cols,
-        'series_list_map': series_list_map_cols
-    }
+    t_d = {}
+    t_d['series_ns'] = series_ns_cols
+    t_d['circles'] = circle_cols
+    t_d['artists'] = artist_cols
+    t_d['series'] = series_cols
+    t_d['chapters'] = chapters_cols
+    t_d['namespaces'] = namespaces_cols
+    t_d['tags'] = tags_cols
+    t_d['tags_mappings'] = tags_mappings_cols
+    t_d['series_tags_mappings'] = series_tags_mappings_cols
+    t_d['hashes'] = hashes_cols
+    t_d['list'] = list_cols
+    t_d['series_list_map'] = series_list_map_cols
 
     log_d('Checking table structures')
     c.executescript(STRUCTURE_SCRIPT)
@@ -366,12 +309,11 @@ def global_db_convert(conn):
             try:
                 c.execute('ALTER TABLE {} ADD COLUMN {}'.format(table, col))
                 log_d('Added new column: {}'.format(col))
-            except sqlite3.ProgrammingError:
+            except:
                 log_d('Skipped column: {}'.format(col))
     conn.commit()
     log_d('Commited DB changes')
     return c
-
 
 def add_db_revisions(old_db):
     """
@@ -391,7 +333,6 @@ def add_db_revisions(old_db):
     conn.close()
     return
 
-
 def create_db_path(db_path=db_constants.DB_PATH):
     head = os.path.split(db_path)[0]
     os.makedirs(head, exist_ok=True)
@@ -402,7 +343,7 @@ def create_db_path(db_path=db_constants.DB_PATH):
 
 
 def check_db_version(conn):
-    """Checks if DB version is allowed. Raises dialog if not"""
+    "Checks if DB version is allowed. Raises dialog if not"
     vs = "SELECT version FROM version"
     c = conn.cursor()
     c.execute(vs)
@@ -413,8 +354,8 @@ def check_db_version(conn):
         msg = "Incompatible database"
         log_c(msg)
         log_d('Local database version: {}\nProgram database version:{}'.format(db_vs[0],
-                                                                               db_constants.CURRENT_DB_VERSION))
-        # ErrorQueue.put(msg)
+                                                                         db_constants.CURRENT_DB_VERSION))
+        #ErrorQueue.put(msg)
         return False
     return True
     
@@ -456,39 +397,38 @@ def init_db(path=db_constants.DB_PATH):
     conn.execute("PRAGMA foreign_keys = on")
     return conn
 
-
 class DBBase:
-    """The base DB class. _DB_CONN should be set at runtime on startup"""
+    "The base DB class. _DB_CONN should be set at runtime on startup"
     _DB_CONN = None
     _AUTO_COMMIT = True
-    _STATE = {'active': False}
+    _STATE = {'active':False}
 
     def __init__(self, **kwargs):
         pass
 
     @classmethod
     def begin(cls):
-        """Useful when modifying for a large amount of data"""
+        "Useful when modifying for a large amount of data"
         if not cls._STATE['active']:
             cls._AUTO_COMMIT = False
-            cls.execute(cls(), "BEGIN TRANSACTION")
+            cls.execute(cls, "BEGIN TRANSACTION")
             cls._STATE['active'] = True
-        # print("STARTED DB OPTIMIZE")
+        #print("STARTED DB OPTIMIZE")
 
     @classmethod
     def end(cls):
-        """Called to commit and end transaction"""
+        "Called to commit and end transaction"
         if cls._STATE['active']:
             try:
-                cls.execute(cls(), "COMMIT")
+                cls.execute(cls, "COMMIT")
             except sqlite3.OperationalError:
                 pass
             cls._AUTO_COMMIT = True
             cls._STATE['active'] = False
-        # print("ENDED DB OPTIMIZE")
+        #print("ENDED DB OPTIMIZE")
 
     def execute(self, *args):
-        """Same as cursor.execute"""
+        "Same as cursor.execute"
         if not self._DB_CONN:
             raise db_constants.NoDatabaseConnection
         log_d('DB Query: {}'.format(args).encode(errors='ignore'))
@@ -503,7 +443,7 @@ class DBBase:
             return self._DB_CONN.execute(*args)
     
     def executemany(self, *args):
-        """Same as cursor.executemany"""
+        "Same as cursor.executemany"
         if not self._DB_CONN:
             raise db_constants.NoDatabaseConnection
         log_d('DB Query: {}'.format(args).encode(errors='ignore'))
