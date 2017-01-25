@@ -186,7 +186,7 @@ def start(test=False):
                     done = True
         """
 
-        WINDOW = app.AppWindow(args.exceptions)
+        window = app.AppWindow(args.exceptions)
 
         # styling
         d_style = app_constants.default_stylesheet_path
@@ -220,7 +220,7 @@ def start(test=False):
         log_d('Create temp: OK')
 
         if test:
-            return application, WINDOW
+            return application, window
 
         return application.exec_()
 
