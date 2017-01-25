@@ -20,6 +20,7 @@ from PyQt5.QtCore import QFile, Qt
 from PyQt5.QtGui import QFontDatabase
 
 from database import db, db_constants
+from custom_logging import init_logging
 import app
 import app_constants
 import gallerydb
