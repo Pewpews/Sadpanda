@@ -100,34 +100,8 @@ def start(test=False):
                      help='Development Switch')
 
     args = parser.parse_args()
-    log_handlers = []
-    log_level = logging.INFO
-    if args.dev:
-        log_handlers.append(logging.StreamHandler())
-    if args.debug:
-        print("happypanda_debug.log created at {}".format(os.getcwd()))
-        # create log
-        try:
-            with open(debug_log_path, 'x') as f:
-                pass
-        except FileExistsError:
-            pass
 
-        log_handlers.append(logging.FileHandler(debug_log_path, 'w', 'utf-8'))
-        log_level = logging.DEBUG
-        app_constants.DEBUG = True
-    else:
-        try:
-            with open(log_path, 'x') as f:
-                pass
-        except FileExistsError: pass
-        log_handlers.append(logging.handlers.RotatingFileHandler(
-            log_path, maxBytes=1000000*10, encoding='utf-8', backupCount=2))
-
-    logging.basicConfig(level=log_level,
-                    format='%(asctime)-8s %(levelname)-6s %(name)-6s %(message)s',
-                    datefmt='%d-%m %H:%M',
-                    handlers=tuple(log_handlers))
+    init_logging(log_path=log_path, debug_log_path=debug_log_path, dev=args.dev, debug=args.debug)
 
     log = logging.getLogger(__name__)
     log_i = log.info
