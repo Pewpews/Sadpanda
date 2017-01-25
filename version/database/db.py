@@ -34,8 +34,10 @@ def series_ns_sql(cols=False):
         ]
 
     for x, s in enumerate(col_list):
-        if x != len(col_list) - 1:
+        if x < len(col_list) - 1:
             sql += s + ','
+        else:
+            sql += s
     sql += ");"
     if cols:
         return sql, col_list
@@ -50,8 +52,10 @@ def cirlce_sql(cols=False):
         ]
 
     for x, s in enumerate(col_list):
-        if x != len(col_list) - 1:
+        if x < len(col_list) - 1:
             sql += s + ','
+        else:
+            sql += s
     sql += ");"
     if cols:
         return sql, col_list
@@ -68,8 +72,10 @@ def artist_sql(cols=False):
         ]
 
     for x, s in enumerate(col_list):
-        if x != len(col_list) - 1:
+        if x < len(col_list) - 1:
             sql += s + ','
+        else:
+            sql += s
     sql += ");"
     if cols:
         return sql, col_list
@@ -128,8 +134,10 @@ def series_sql(cols=False):
         "FOREIGN KEY(ns_id) REFERENCES series_ns(ns_id)",
         ]
     for x, s in enumerate(col_list):
-        if x != len(col_list) - 1:
+        if x < len(col_list) - 1:
             sql += s + ','
+        else:
+            sql += s
     sql += ");"
     if cols:
         return sql, col_list
@@ -238,8 +246,10 @@ def list_sql(cols=False):
         "strict INTEGER DEFAULT 0",
         ]
     for x, s in enumerate(col_list):
-        if x != len(col_list) - 1:
+        if x < len(col_list) - 1:
             sql += s + ','
+        else:
+            sql += s
     sql += ");"
     if cols:
         return sql, col_list
@@ -264,7 +274,7 @@ def series_list_map_sql(cols=False):
 
 STRUCTURE_SCRIPT = series_ns_sql()+cirlce_sql()+artist_sql()+series_sql()+chapters_sql()+namespaces_sql()+tags_sql()+tags_mappings_sql()+\
     series_tags_mappings_sql()+hashes_sql()+list_sql()+series_list_map_sql()
-
+print(STRUCTURE_SCRIPT)
 def global_db_convert(conn):
     """
     Takes care of converting tables and columns.
