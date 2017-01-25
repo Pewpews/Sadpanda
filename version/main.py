@@ -25,6 +25,55 @@ import app_constants
 import gallerydb
 import utils
 
+
+def create_log_file(path):
+    """create log file.
+
+    Args:
+        path: Path of the log file.
+    """
+    try:
+        with open(path, 'x') as f:
+            pass
+    except FileExistsError:
+        pass
+
+
+def init_logging(log_path, debug_log_path, dev=None, debug=None):
+    """init logging.
+
+    Args:
+        log_path: Path for log file for normal logging.
+        debug_log_path: Path for log file for debug logging.
+        dev (bool): Set logging for dev mode.
+        debug (bool: Set logging for debug mode.)
+    """
+    log_handlers = []
+    log_level = logging.INFO
+    if args.dev:
+        log_handlers.append(logging.StreamHandler())
+    if args.debug:
+        print("happypanda_debug.log created at {}".format(os.getcwd()))
+        # create log
+        create_log_file(debug_log_path)
+
+        log_handlers.append(logging.FileHandler(debug_log_path, 'w', 'utf-8'))
+        log_level = logging.DEBUG
+        app_constants.DEBUG = True
+    else:
+        create_log_file(log_path)
+
+        log_handlers.append(logging.handlers.RotatingFileHandler(
+            log_path, maxBytes=1000000*10, encoding='utf-8', backupCount=2))
+
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)-8s %(levelname)-6s %(name)-6s %(message)s',
+        datefmt='%d-%m %H:%M',
+        handlers=tuple(log_handlers)
+    )
+
+
 #IMPORTANT STUFF
 def start(test=False):
     app_constants.APP_RESTART_CODE = -123456789
