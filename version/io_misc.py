@@ -88,14 +88,11 @@ class GalleryDownloaderItem(QObject):
         self.cost_item.setToolTip(url)
         self.size_item = QTableWidgetItem(self.item.size)
         self.size_item.setToolTip(url)
-        _type = 'Unknown'
-        if hitem.download_type == app_constants.DOWNLOAD_TYPE_ARCHIVE:
-            _type = 'Archive'
-        if hitem.download_type == app_constants.DOWNLOAD_TYPE_OTHER:
-            _type = 'Other'
-        if hitem.download_type == app_constants.DOWNLOAD_TYPE_TORRENT:
-            _type = 'Torrent'
-        self.type_item = QTableWidgetItem(_type)
+        if hitem.download_type in app_constants.DOWNLOAD_TYPE_DICT_CONSTANT:
+            type_ = app_constants.DOWNLOAD_TYPE_DICT_CONSTANT[hitem.DOWNLOAD_TYPE]
+        else:
+            type_ = 'Unknown'
+        self.type_item = QTableWidgetItem(type_)
         self.type_item.setToolTip(url)
 
         self.status_timer = QTimer()

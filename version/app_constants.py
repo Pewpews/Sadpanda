@@ -55,6 +55,11 @@ unrar_tool_path = get('', 'Application', 'unrar tool path')
 DOWNLOAD_TYPE_ARCHIVE = 0
 DOWNLOAD_TYPE_TORRENT = 1 # Note: With this type, file will be sent to torrent program
 DOWNLOAD_TYPE_OTHER = 2
+DOWNLOAD_TYPE_DICT_CONSTANT = {
+    DOWNLOAD_TYPE_ARCHIVE: 'Archive',
+    DOWNLOAD_TYPE_TORRENT: 'Torrent',
+    DOWNLOAD_TYPE_OTHER: 'Other'
+}
 
 VALID_GALLERY_CATEGORY = (
     'Doujinshi',
