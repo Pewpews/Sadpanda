@@ -35,7 +35,7 @@ def init_logging(log_path, debug_log_path, dev=None, debug=None):
     if dev:
         log_handlers.append(logging.StreamHandler())
     if debug:
-        print("happypanda_debug.log created at {}".format(os.getcwd()))
+        print("happypanda_debug.log created at {}".format(os.path.dirname(debug_log_path)))
         # create log
         create_log_file(debug_log_path)
 
