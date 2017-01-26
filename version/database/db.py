@@ -261,6 +261,8 @@ def series_list_map_sql(cols=False):
 STRUCTURE_SCRIPT = series_ns_sql()+cirlce_sql()+artist_sql()+series_sql()+chapters_sql()+namespaces_sql()+tags_sql()+tags_mappings_sql()+\
     series_tags_mappings_sql()+hashes_sql()+list_sql()+series_list_map_sql()
 
+log_i(STRUCTURE_SCRIPT)
+
 def global_db_convert(conn):
     """
     Takes care of converting tables and columns.

@@ -1,4 +1,4 @@
-"""test module."""
+"""test db module."""
 from itertools import product
 from unittest import mock
 
@@ -10,11 +10,11 @@ import pytest
     product([False, True], repeat=3)
 )
 def test_init_db(path_isfile_retval, check_dbv_retval, path_is_dbc_path):
-    """test func."""
+    """test sqlite generation and db creation"""
     with mock.patch('version.database.db.db_constants') as m_dbc, \
-            mock.patch('version.database.db.sqlite3')  as m_sl3, \
-            mock.patch('version.database.db.os')  as m_os, \
-            mock.patch('version.database.db.create_db_path')  as m_create_db_path, \
+            mock.patch('version.database.db.sqlite3') as m_sl3, \
+            mock.patch('version.database.db.os') as m_os, \
+            mock.patch('version.database.db.create_db_path') as m_create_db_path, \
             mock.patch('version.database.db.check_db_version') \
             as m_check_dbv:
         from version.database import db
