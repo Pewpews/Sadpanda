@@ -88,16 +88,25 @@ class GalleryDownloaderItem(QObject):
         self.cost_item.setToolTip(url)
         self.size_item = QTableWidgetItem(self.item.size)
         self.size_item.setToolTip(url)
-        if hitem.download_type in app_constants.DOWNLOAD_TYPE_DICT_CONSTANT:
-            type_ = app_constants.DOWNLOAD_TYPE_DICT_CONSTANT[hitem.download_type]
-        else:
-            type_ = 'Unknown'
+        type_ = self.get_item_download_type(item=hitem)
         self.type_item = QTableWidgetItem(type_)
         self.type_item.setToolTip(url)
 
         self.status_timer = QTimer()
         self.status_timer.timeout.connect(self.check_progress)
         self.status_timer.start(500)
+
+    @staticmethod
+    def get_item_download_type(item):
+        """get item's download type."""
+        # compatibility
+        hitem = item
+
+        if hitem.download_type in app_constants.DOWNLOAD_TYPE_DICT_CONSTANT:
+            type_ = app_constants.DOWNLOAD_TYPE_DICT_CONSTANT[hitem.download_type]
+        else:
+            type_ = 'Unknown'
+        return type_
 
     def check_progress(self):
         if self.item.current_state == self.item.DOWNLOADING:
