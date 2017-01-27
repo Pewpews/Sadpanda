@@ -89,7 +89,7 @@ class GalleryDownloaderItem(QObject):
         self.size_item = QTableWidgetItem(self.item.size)
         self.size_item.setToolTip(url)
         if hitem.download_type in app_constants.DOWNLOAD_TYPE_DICT_CONSTANT:
-            type_ = app_constants.DOWNLOAD_TYPE_DICT_CONSTANT[hitem.DOWNLOAD_TYPE]
+            type_ = app_constants.DOWNLOAD_TYPE_DICT_CONSTANT[hitem.download_type]
         else:
             type_ = 'Unknown'
         self.type_item = QTableWidgetItem(type_)
