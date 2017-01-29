@@ -45,6 +45,7 @@ from PyQt5.QtWidgets import (QListView, QFrame, QLabel,
                              QWidget, QHeaderView, QTableView, QApplication,
                              QMessageBox, QActionGroup, QScroller, QStackedLayout)
 
+from executors import Executors
 import gallerydb
 import app_constants
 import misc
@@ -640,7 +641,7 @@ class GalleryModel(QAbstractTableModel):
             elif section == self._LANGUAGE:
                 return 'Language'
             elif section == self._LINK:
-                return 'Link'
+                return 'URL'
             elif section == self._DESCR:
                 return 'Description'
             elif section == self._DATE_ADDED:
