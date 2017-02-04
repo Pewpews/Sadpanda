@@ -483,11 +483,13 @@ class GalleryDB(DBBase):
         assert isinstance(list_of_gallery, list), "Please provide a valid list of galleries to delete"
         for gallery in list_of_gallery:
             if local:
+                app_constants.TEMP_PATH_IGNORE.append(os.path.normcase(gallery.path))
                 if gallery.is_archive:
                     s = delete_path(gallery.path)
                 else:
-                    for chap in gallery.chapters:
-                        path = chap.path
+                    paths = [x.path for x in gallery.chapters]
+                    [app_constants.TEMP_PATH_IGNORE.append(os.path.normcase(x)) for x in paths] # to avoid data race?
+                    for path in paths:
                         s = delete_path(path)
                         if not s:
                             log_e('Failed to delete chapter {}:{}, {}'.format(chap,
@@ -1625,7 +1627,7 @@ class Gallery:
                     return True
             else:
                 if app_constants.DEBUG:
-                    print(tag, term)
+                    log_d("{} {}".format(tag, term))
                 if utils.search_term(tag, term, args):
                     return True
             return False
@@ -2115,14 +2117,14 @@ class AdminDB(QObject):
 
     def rebuild_database(self):
         "Rebuilds database"
-        log_i("Initiating datbase rebuild")
+        log_i("Initiating database rebuild")
         utils.backup_database()
         log_i("Getting galleries...")
         galleries = GalleryDB.get_all_gallery()
         self.DATA_COUNT.emit(len(galleries))
         db.DBBase._DB_CONN.close()
         log_i("Removing old database...")
-        log_i("Initiating new database...")
+        log_i("Creating new database...")
         temp_db = os.path.join(db_constants.DB_ROOT, "happypanda_temp.db")
         if os.path.exists(temp_db):
             os.remove(temp_db)

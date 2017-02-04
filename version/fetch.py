@@ -146,7 +146,7 @@ class Fetch(QObject):
                                 for g in archive_g:
                                     chap = new_gallery.chapters.create_chapter()
                                     chap.in_archive = 1
-                                    chap.title = utils.title_parser(g)['title']
+                                    chap.title = parsed['title'] if not g else utils.title_parser(g.replace('/', ''))['title']
                                     chap.path = g
                                     metafile.update(utils.GMetafile(g, temp_p))
                                     arch = utils.ArchiveFile(temp_p)
@@ -172,6 +172,10 @@ class Fetch(QObject):
                 except app_constants.CreateArchiveFail:
                     log_w('Skipped {} in local search'.format(path.encode(errors='ignore')))
                     self.skipped_paths.append((temp_p, 'Error creating archive',))
+                    return
+                except app_constants.TitleParsingError:
+                    log_w('Skipped {} in local search'.format(path.encode(errors='ignore')))
+                    self.skipped_paths.append((temp_p, 'Error while parsing folder/archive name',))
                     return
 
             new_gallery.title = parsed['title']
@@ -356,6 +360,8 @@ class Fetch(QObject):
                 log_i("Using existing gallery url")
                 check = self._website_checker(gallery.link)
                 if check == valid_url:
+                    # convert g.e-h to e-h
+                    gallery.link = pewnet.HenManager.gtoEh(gallery.link)
                     gallery.temp_url = gallery.link
                     checked_pre_url_galleries.append(gallery)
                     if x == len(galleries):
@@ -504,8 +510,8 @@ class Fetch(QObject):
             if 'exhentai' in self._default_ehen_url:
                 try:
                     exprops = settings.ExProperties()
-                    if exprops.check():
-                        hen = pewnet.ExHen(exprops.cookies)
+                    hen = pewnet.ExHen(exprops.cookies)
+                    if hen.check_login(exprops.cookies):
                         valid_url = 'exhen'
                         log_i("using exhen")
                     else:

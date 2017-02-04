@@ -48,10 +48,13 @@ class ToolbarTabManager(QObject):
         self._last_selected = None
         self.idx_widget = self.toolbar.addWidget(QWidget(self.toolbar))
         self.idx_widget.setVisible(False)
+
+        self.agroup = QButtonGroup(self)
+        self.agroup.setExclusive(True)
+
         self.library_btn = None
-        self.favorite_btn = self.addTab("Favorites", delegate_paint=False)
-        self.library_btn = self.addTab("Library", delegate_paint=False)
-        self.toolbar.addSeparator()
+        self.favorite_btn = self.addTab("Favorites", delegate_paint=False, icon=app_constants.STAR_ICON)
+        self.library_btn = self.addTab("Library", delegate_paint=False, icon=app_constants.GRIDL_ICON)
         self.idx_widget = self.toolbar.addWidget(QWidget(self.toolbar))
         self.idx_widget.setVisible(False)
         self.toolbar.addSeparator()
@@ -71,9 +74,15 @@ class ToolbarTabManager(QObject):
         b.view.list_view.sort_model.rowsRemoved.connect(self.parent_widget.stat_row_info)
         b.view.show()
 
-    def addTab(self, name, view_type=app_constants.ViewType.Default, delegate_paint=True, allow_sidebarwidget=False):
+    def addTab(self, name, view_type=app_constants.ViewType.Default, delegate_paint=True, allow_sidebarwidget=False, icon=None):
         if self.toolbar:
             t = misc.ToolbarButton(self.toolbar, name)
+            if icon:
+                t.setIcon(icon)
+            else:
+                t.setIcon(app_constants.CIRCLE_ICON)
+            t.setCheckable(True)
+            self.agroup.addButton(t)
             t.select.connect(self._manage_selected)
             t.close_tab.connect(self.removeTab)
             if self.library_btn:
@@ -295,8 +304,9 @@ class GalleryListEdit(misc.BasePopup):
         self.name_edit = QLineEdit(self)
         main_layout.addRow("Name:", self.name_edit)
         self.filter_edit = QPlainTextEdit(self)
+        self.filter_edit.setPlaceholderText("tag1, namespace:tag2, namespace2:[tag1, tag2] ...")
         self.filter_edit.setFixedHeight(100)
-        what_is_filter = misc.ClickedLabel("What is filter/enforce? (Hover)")
+        what_is_filter = misc.ClickedLabel("What is Filter/Enforce? (Hover)")
         what_is_filter.setToolTip(app_constants.WHAT_IS_FILTER)
         what_is_filter.setToolTipDuration(9999999999)
         self.enforce = QCheckBox(self)

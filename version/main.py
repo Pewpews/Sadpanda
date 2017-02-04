@@ -64,7 +64,7 @@ def start(test=False):
         except FileExistsError:
             pass
 
-        log_handlers.append(logging.FileHandler('happypanda_debug.log', 'w', 'utf-8'))
+        log_handlers.append(logging.FileHandler(debug_log_path, 'w', 'utf-8'))
         log_level = logging.DEBUG
         app_constants.DEBUG = True
     else:
@@ -75,6 +75,10 @@ def start(test=False):
         log_handlers.append(logging.handlers.RotatingFileHandler(
             log_path, maxBytes=1000000*10, encoding='utf-8', backupCount=2))
 
+    # Fix for logging not working
+    # clear the handlers first before adding these custom handler
+    # http://stackoverflow.com/a/15167862
+    logging.getLogger('').handlers = []
     logging.basicConfig(level=log_level,
                     format='%(asctime)-8s %(levelname)-6s %(name)-6s %(message)s',
                     datefmt='%d-%m %H:%M',

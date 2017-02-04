@@ -23,7 +23,7 @@ except ImportError:
     from .database import db_constants
 
 # Version number
-vs  = '0.31'
+vs  = '1.0'
 DEBUG = False
 
 OS_NAME = ''
@@ -50,13 +50,32 @@ else:
 # path to unrar tool binary
 unrar_tool_path = get('', 'Application', 'unrar tool path')
 
+# type of download needed by download manager for each site parser
+# NOTE define here if any new type will be supported in the future.
+DOWNLOAD_TYPE_ARCHIVE = 0
+DOWNLOAD_TYPE_TORRENT = 1 # Note: With this type, file will be sent to torrent program
+DOWNLOAD_TYPE_OTHER = 2
+
+VALID_GALLERY_CATEGORY = (
+    'Doujinshi',
+    'Manga',
+    'Artist CG',
+    'Game CG',
+    'Western',
+    'Non-H',
+    'Image Set',
+    'Cosplay',
+    'Miscellaneous',
+    'Private'
+)
+
 #default stylesheet path
 default_stylesheet_path = os.path.join(static_dir,"style.css")
 user_stylesheet_path = ""
 
-INTERNAL_LEVEL = 7
-FIRST_TIME_LEVEL = get(7, 'Application', 'first time level', int)
-UPDATE_VERSION = get('0.31', 'Application', 'version', str)
+INTERNAL_LEVEL = 8
+FIRST_TIME_LEVEL = get(INTERNAL_LEVEL, 'Application', 'first time level', int)
+UPDATE_VERSION = get('0.30', 'Application', 'version', str)
 FORCE_HIGH_DPI_SUPPORT = get(False, 'Advanced', 'force high dpi support', bool)
 
 # sizes
@@ -122,6 +141,7 @@ def load_icons():
     global ARROW_RIGHT_ICON
     global ARROW_LEFT_ICON
     global GRID_ICON
+    global GRIDL_ICON
     global SEARCH_ICON
     global CROSS_ICON
     global CROSS_ICON_WH
@@ -132,6 +152,10 @@ def load_icons():
     global SORT_ICON_DESC
     global SORT_ICON_ASC
     global REFRESH_ICON
+    global STAR_ICON
+    global CIRCLE_ICON
+    global INBOX_ICON
+    global SPINNER_ICON
 
     G_LISTS_ICON_WH = qta.icon("fa.bars", color="white")
     G_LISTS_ICON = qta.icon("fa.bars", color="black")
@@ -143,6 +167,7 @@ def load_icons():
     ARROW_RIGHT_ICON = qta.icon("fa.angle-double-right", color="white")
     ARROW_LEFT_ICON = qta.icon("fa.angle-double-left", color="white")
     GRID_ICON = qta.icon("fa.th", color="white")
+    GRIDL_ICON = qta.icon("fa.th-large", color="white")
     SEARCH_ICON = qta.icon("fa.search", color="white")
     CROSS_ICON = qta.icon("fa.times", color="black")
     CROSS_ICON_WH = qta.icon("fa.times", color="white")
@@ -153,6 +178,10 @@ def load_icons():
     SORT_ICON_DESC = qta.icon("fa.sort-amount-desc", color="white")
     SORT_ICON_ASC = qta.icon("fa.sort-amount-asc", color="white")
     REFRESH_ICON = qta.icon("fa.refresh", color="black")
+    STAR_ICON = qta.icon("fa.star", color="white")
+    CIRCLE_ICON = qta.icon("fa.circle", color="white")
+    INBOX_ICON = qta.icon("fa.inbox", color="white")
+    SPINNER_ICON = qta.icon("fa.spinner", color="white")
 
 # image paths
 GALLERY_DEF_ICO_PATH = os.path.join(static_dir, "gallery_def_ico.ico")
@@ -203,13 +232,13 @@ HASH_GALLERY_PAGES = get('all', 'Advanced', 'hash gallery pages', int, str)
 INCLUDE_EH_EXPUNGED = get(False, 'Web', 'include eh expunged', bool)
 GLOBAL_EHEN_TIME = get(5, 'Web', 'global ehen time offset', int)
 GLOBAL_EHEN_LOCK = False
-DEFAULT_EHEN_URL = get('http://g.e-hentai.org/', 'Web', 'default ehen url', str)
+DEFAULT_EHEN_URL = get('https://e-hentai.org/', 'Web', 'default ehen url', str)
 REPLACE_METADATA = get(False, 'Web', 'replace metadata', bool)
 ALWAYS_CHOOSE_FIRST_HIT = get(False, 'Web', 'always choose first hit', bool)
 USE_GALLERY_LINK = get(True, 'Web', 'use gallery link', bool)
 USE_JPN_TITLE = get(False, 'Web', 'use jpn title', bool)
 CONTINUE_AUTO_METADATA_FETCHER = get(True, 'Web', 'continue auto metadata fetcher', bool)
-HEN_DOWNLOAD_TYPE = get(0, 'Web', 'hen download type', int)
+HEN_DOWNLOAD_TYPE = get(DOWNLOAD_TYPE_ARCHIVE, 'Web', 'hen download type', int)
 DOWNLOAD_DIRECTORY = get('downloads', 'Web', 'download directory', str)
 TORRENT_CLIENT = get('', 'Web', 'torrent client', str)
 HEN_LIST = get(['chaikahen'], 'Web', 'hen list', list)
@@ -314,6 +343,8 @@ class WrongURL(Exception): pass
 class NeedLogin(Exception): pass
 class WrongLogin(Exception): pass
 class HTMLParsing(Exception): pass
+class GNotAvailable(Exception): pass
+class TitleParsingError(Exception): pass
 
 EXTERNAL_VIEWER_INFO =\
 	"""{$folder} = path to folder
@@ -323,21 +354,24 @@ Tip: IrfanView uses {$file}
 	"""
 
 WHAT_IS_FILTER =\
-	"""Filters are basically predefined gallery search terms.
+	"""[FILTER]
+Filters are basically predefined gallery search terms.
 Every time a gallery matches the specific filter it gets automatically added to the list!
 
 Filter works the same way a gallery search does so make sure to read the guide in
 Settings -> About -> Search Guide.
 You can write any valid gallery search term.
 
-Enabling Enforce will only allow galleries matching the specified filter in the ist.
+[ENFORCE]
+With Enforce enabled the list will only allow galleries that match the specified filter into the list.
 """
 
 SUPPORTED_DOWNLOAD_URLS=\
 	"""Supported URLs:
-- exhentai/g.e-hentai gallery urls, e.g.: http://g.e-hentai.org/g/618395/0439fa3666/
+- exhentai/g.e-hentai/e-hentai gallery urls, e.g.: https://e-hentai.org/g/618395/0439fa3666/
 - panda.chaika.moe gallery and archive urls
 	http://panda.chaika.moe/[0]/[1]/ where [0] is 'gallery' or 'archive' and [1] are numbers
+- asmhentai.com gallery urls, e.g: http://asmhentai.com/g/102845/
 	"""
 
 SUPPORTED_METADATA_URLS=\
@@ -349,10 +383,10 @@ SUPPORTED_METADATA_URLS=\
 
 EXHEN_COOKIE_TUTORIAL =\
 	"""
-How do you find these two values? <br \>
-<b>Firefox/Chrome/Others</b> <br \>
-1. Navigate to exhentai.org <br \>
-2. Right click --> Inspect element <br \>
+How do I find these two values? <br \>
+<b>All browsers</b> <br \>
+1. Navigate to e-hentai.org (needs to be logged in) or exhentai.org <br \>
+2. Right click on page --> Inspect element <br \>
 3. Go on 'Console' tab <br \>
 4. Write : 'document.cookie' <br \>
 5. A line of values should appear that correspond to active cookies <br \>
@@ -911,20 +945,6 @@ KEYBOARD_SHORTCUTS_INFO =\
 <tr>
 <td>Toggle gallery menu</td>
 <td><code>Alt+G</code></td>
-<td>same</td>
-<td>same</td>
-<td>same</td>
-</tr>
-<tr>
-<td>Toggle tools menu</td>
-<td><code>Alt+T</code></td>
-<td>same</td>
-<td>same</td>
-<td>same</td>
-</tr>
-<tr>
-<td>Toggle sort menu</td>
-<td><code>Alt+S</code></td>
 <td>same</td>
 <td>same</td>
 <td>same</td>

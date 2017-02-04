@@ -64,6 +64,7 @@ class AppWindow(QMainWindow):
     "The application's main window"
 
     move_listener = pyqtSignal()
+    login_check_invoker = pyqtSignal()
     db_startup_invoker = pyqtSignal(list)
     duplicate_check_invoker = pyqtSignal(gallery.GalleryModel)
     admin_db_method_invoker = pyqtSignal(object)
@@ -77,6 +78,7 @@ class AppWindow(QMainWindow):
         app_constants.GENERAL_THREAD = QThread(self)
         app_constants.GENERAL_THREAD.finished.connect(app_constants.GENERAL_THREAD.deleteLater)
         app_constants.GENERAL_THREAD.start()
+        self.check_site_logins()
         self._db_startup_thread = QThread(self)
         self._db_startup_thread.finished.connect(self._db_startup_thread.deleteLater)
         self.db_startup = gallerydb.DatabaseStartup()
@@ -98,6 +100,23 @@ class AppWindow(QMainWindow):
         prev_view = QShortcut(QKeySequence(QKeySequence.PreviousChild), self, self.switch_display)
         next_view = QShortcut(QKeySequence(QKeySequence.NextChild), self, self.switch_display)
         help = QShortcut(QKeySequence(QKeySequence.HelpContents), self, lambda:utils.open_web_link("https://github.com/Pewpews/happypanda/wiki"))
+
+    def check_site_logins(self):
+        # checking logins
+        # need to do this to avoid settings dialog locking up
+        class LoginCheck(QObject):
+            def __init__(self):
+                super().__init__()
+            def check(self):
+                for s in settings.ExProperties.sites:
+                    ex = settings.ExProperties(s)
+                    if ex.cookies:
+                        if s == settings.ExProperties.EHENTAI:
+                            pewnet.EHen.check_login(ex.cookies)
+        logincheck = LoginCheck()
+        self.login_check_invoker.connect(logincheck.check)
+        logincheck.moveToThread(app_constants.GENERAL_THREAD)
+        self.login_check_invoker.emit()
 
     def init_watchers(self):
 
@@ -153,14 +172,13 @@ class AppWindow(QMainWindow):
             if app_constants.UPDATE_VERSION != app_constants.vs:
                 pop = misc.BasePopup(self, blur=False)
                 ml = QVBoxLayout(pop.main_widget)
-                ml.addWidget(QLabel("\nGoodbye Happypanda(old)!\n\n\nHello, this is the last release of 'old' Happypanda.\n"+
+                ml.addWidget(QLabel("\nGoodbye Happypanda!\n\n\nHello, this is the last release of 'old' Happypanda.\n"+
                     "This means that I (personally) won't be adding any new features or fix bugs.\n\n"+
                     "I have started a new project where I (with the help of others)\n try to create a better Happypanda from scratch.\n\n"+
                     "Please follow me on twitter (@pewspew) to keep yourself updated!\n"))
                 ml.addLayout(pop.buttons_layout)
                 pop.add_buttons("close")[0].clicked.connect(pop.close)
                 pop.adjustSize()
-                misc.centerWidget(pop, self)
                 pop.show()
 
             if app_constants.ENABLE_MONITOR and \
@@ -170,34 +188,14 @@ class AppWindow(QMainWindow):
             app_constants.DOWNLOAD_MANAGER = self.download_manager
             self.download_manager.start_manager(4)
 
-        if app_constants.FIRST_TIME_LEVEL < 5:
-            log_i('Invoking first time level {}'.format(5))
-            app_constants.INTERNAL_LEVEL = 5
-            app_widget = misc.AppDialog(self)
-            app_widget.note_info.setText("<font color='red'>IMPORTANT:</font> Application restart is required when done")
-            app_widget.restart_info.hide()
-            self.admin_db = gallerydb.AdminDB()
-            self.admin_db.moveToThread(app_constants.GENERAL_THREAD)
-            self.admin_db.DONE.connect(done)
-            self.admin_db.DONE.connect(lambda: app_constants.NOTIF_BAR.add_text("Application requires a restart"))
-            self.admin_db.DONE.connect(self.admin_db.deleteLater)
-            self.admin_db.DATA_COUNT.connect(app_widget.prog.setMaximum)
-            self.admin_db.PROGRESS.connect(app_widget.prog.setValue)
-            self.admin_db_method_invoker.connect(self.admin_db.from_v021_to_v022)
-            self.admin_db_method_invoker.connect(app_widget.show)
-            app_widget.adjustSize()
-            db_p = os.path.join(os.path.split(database.db_constants.DB_PATH)[0], 'sadpanda.db')
-            self.admin_db_method_invoker.emit(db_p)
-        elif app_constants.FIRST_TIME_LEVEL < 7:
-            log_i('Invoking first time level {}'.format(7))
-            app_constants.INTERNAL_LEVEL = 7
-            if app_constants.EXTERNAL_VIEWER_ARGS == '{file}':
-                app_constants.EXTERNAL_VIEWER_ARGS = '{$file}'
-                settings.set('{$file}','Advanced', 'external viewer args')
-                settings.save()
-            done()
-        else:
-            done()
+        eh_url = app_constants.DEFAULT_EHEN_URL
+        if 'g.e-h' in eh_url or 'http://' in eh_url: # reset default hen
+            eh_url_n = 'https://e-hentai.org/'
+            settings.set(eh_url_n, 'Web', 'default ehen url')
+            settings.save()
+            app_constants.DEFAULT_EHEN_URL = eh_url_n
+
+        done()
 
     def initUI(self):
         self.center = QWidget()
@@ -346,7 +344,7 @@ class AppWindow(QMainWindow):
                 else:
                     galleries = self.current_manga_view.gallery_model._data
                 if not galleries:
-                    self.notification_bar.add_text('Looks like we\'ve already gone through all galleries!')
+                    self.notification_bar.add_text('All galleries has already been processed!')
                     return None
             fetch_instance.galleries = galleries
 
@@ -512,10 +510,6 @@ class AppWindow(QMainWindow):
         self.toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.toolbar.setIconSize(QSize(20,20))
 
-        spacer_start = QWidget() # aligns the first actions properly
-        spacer_start.setFixedSize(QSize(5, 1))
-        self.toolbar.addWidget(spacer_start)
-
         def switch_view(fav):
             if fav:
                 self.default_manga_view.get_current_view().sort_model.fav_view()
@@ -527,7 +521,7 @@ class AppWindow(QMainWindow):
         self.tab_manager.library_btn.click()
         self.tab_manager.library_btn.clicked.connect(lambda: switch_view(False))
 
-        self.addition_tab = self.tab_manager.addTab("Inbox", app_constants.ViewType.Addition)
+        self.addition_tab = self.tab_manager.addTab("Inbox", app_constants.ViewType.Addition, icon=app_constants.INBOX_ICON)
 
         gallery_k = QKeySequence('Alt+G')
         new_gallery_k = QKeySequence('Ctrl+N')
@@ -565,10 +559,16 @@ class AppWindow(QMainWindow):
         gallery_menu.addAction(populate_action)
         gallery_menu.addSeparator()
         scan_galleries_action = QAction('Scan for new galleries', self)
+        scan_galleries_action.setIcon(app_constants.SPINNER_ICON)
         scan_galleries_action.triggered.connect(self.scan_for_new_galleries)
         scan_galleries_action.setStatusTip('Scan monitored folders for new galleries')
         scan_galleries_action.setShortcut(scan_galleries_k)
         gallery_menu.addAction(scan_galleries_action)
+
+        duplicate_check_simple = QAction("Check for duplicate galleries", self)
+        duplicate_check_simple.setIcon(app_constants.DUPLICATE_ICON)
+        duplicate_check_simple.triggered.connect(lambda: self.duplicate_check()) # triggered emits False
+        gallery_menu.addAction(duplicate_check_simple)
 
         self.toolbar.addWidget(gallery_action)
 
@@ -585,19 +585,8 @@ class AppWindow(QMainWindow):
         self.toolbar.addWidget(metadata_action)
 
         spacer_tool2 = QWidget() 
-        spacer_tool2.setFixedSize(QSize(3, 1))
+        spacer_tool2.setFixedSize(QSize(1, 1))
         self.toolbar.addWidget(spacer_tool2)
-
-        duplicate_check_simple = QToolButton()
-        duplicate_check_simple.setText("Check duplicates")
-        duplicate_check_simple.setIcon(app_constants.DUPLICATE_ICON)
-        duplicate_check_simple.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        duplicate_check_simple.clicked.connect(lambda: self.duplicate_check()) # triggered emits False
-        self.toolbar.addWidget(duplicate_check_simple)
-
-        spacer_tool3 = QWidget() 
-        spacer_tool3.setFixedSize(QSize(3, 1))
-        self.toolbar.addWidget(spacer_tool3)
         
         gallery_action_random = QToolButton()
         gallery_action_random.setText("Open random gallery")
@@ -608,7 +597,7 @@ class AppWindow(QMainWindow):
         self.toolbar.addWidget(gallery_action_random)
 
         spacer_tool3 = QWidget() 
-        spacer_tool3.setFixedSize(QSize(5, 1))
+        spacer_tool3.setFixedSize(QSize(1, 1))
         self.toolbar.addWidget(spacer_tool3)
 
         gallery_downloader = QToolButton()
@@ -619,11 +608,14 @@ class AppWindow(QMainWindow):
         gallery_downloader.setIcon(app_constants.MANAGER_ICON)
         self.toolbar.addWidget(gallery_downloader)
 
+        spacer_tool4 = QWidget() 
+        spacer_tool4.setFixedSize(QSize(5, 1))
+        self.toolbar.addWidget(spacer_tool4)
+
         # debug specfic code
         if app_constants.DEBUG:
             def debug_func():
-                print(self.current_manga_view.gallery_model.rowCount())
-                print(self.current_manga_view.sort_model.rowCount())
+                pass
         
             debug_btn = QToolButton()
             debug_btn.setText("DEBUG BUTTON")
@@ -757,13 +749,13 @@ class AppWindow(QMainWindow):
             completer.setCompletionRole(Qt.DisplayRole)
             completer.setCompletionColumn(app_constants.TITLE)
             completer.setFilterMode(Qt.MatchContains)
+            completer.activated[str].connect(lambda a: self.search(a))
             self.search_bar.setCompleter(completer)
             self.search_bar.returnPressed.connect(lambda: self.search(self.search_bar.text()))
         if not app_constants.SEARCH_ON_ENTER:
             self.search_bar.textEdited.connect(lambda: self.search_timer.start(800))
         self.search_bar.setPlaceholderText("Search title, artist, namespace & tags")
-        self.search_bar.setMinimumWidth(400)
-        self.search_bar.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        self.search_bar.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.manga_list_view.sort_model.HISTORY_SEARCH_TERM.connect(lambda a: self.search_bar.setText(a))
         self.toolbar.addWidget(self.search_bar)
 
@@ -804,9 +796,6 @@ class AppWindow(QMainWindow):
         settings_act.clicked.connect(self.settings)
         self.toolbar.addWidget(settings_act)
 
-        spacer_end2 = QWidget() # aligns About action properly
-        spacer_end2.setFixedSize(QSize(5, 1))
-        self.toolbar.addWidget(spacer_end2)
         self.addToolBar(self.toolbar)
 
     def get_current_view(self):
@@ -1190,11 +1179,16 @@ class AppWindow(QMainWindow):
         self.duplicate_check_invoker.emit(self.default_manga_view.gallery_model)
 
     def excepthook(self, ex_type, ex, tb):
-        w = misc.AppDialog(self, misc.AppDialog.MESSAGE)
-        w.show()
         log_c(''.join(traceback.format_tb(tb)))
         log_c('{}: {}'.format(ex_type, ex))
         traceback.print_exception(ex_type, ex, tb)
+        w = QMessageBox(self)
+        w.setWindowTitle("Critical Error")
+        w.setIcon(QMessageBox.Critical)
+        w.setText('A critical error has ben encountered. Stability from this point onward cannot be guaranteed.')
+        w.setStandardButtons(QMessageBox.Ok)
+        w.setDefaultButton(QMessageBox.Ok)
+        w.exec_()
 
     def closeEvent(self, event):
         r_code = self.cleanup_exit()
