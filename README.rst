@@ -26,10 +26,15 @@ Features
 
 Screenshots
 ===========
-
-| 
-| 
-| 
+.. image:: https://github.com/Pewpews/happypanda/raw/master/misc/screenshot1.png
+    :width: 100%
+    :align: center
+.. image:: https://github.com/Pewpews/happypanda/raw/master/misc/screenshot1.png
+    :width: 100%
+    :align: center
+.. image:: https://github.com/Pewpews/happypanda/raw/master/misc/screenshot1.png
+    :width: 100%
+    :align: center
 
 How to install and run
 ======================
@@ -45,7 +50,7 @@ Windows
 Mac and Linux
 ^^^^^^^^^^^^^
 
-see `INSTALL.md <INSTALL.md>`__
+see `INSTALL.rst <INSTALL.rst>`__
 
 Updating
 ========
@@ -78,6 +83,7 @@ Dependencies
 -  Pillow (pip) or PIL
 -  python-dateutil (pip)
 -  QtAwesome (pip)
+-  appdirs (pip)
 
 Contributing
 ============
