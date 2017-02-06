@@ -670,7 +670,7 @@ TROUBLE_GUIDE =\
 <ol>
 <li>First close all instances of Happypanda.</li>
 <li>Open a command prompt *(terminal in <em>nix)</em> and navigate to where Happypanda is installed. <em>Eg.: <code>cd path/to/happypanda</code></em></li>
-<li>Now type the name of the main executable with a <code>-d</code> following, <em>eg.: <code>happypanda.exe -d</code> or <code>__main__.py -d</code> if you’re running from source.</em></li>
+<li>Now type the name of the main executable with a <code>-d</code> following, <em>eg.: <code>happypanda -d</code> or <code>__main__.py -d</code> if you’re running from source.</em></li>
 <li>The program will now open and create a new file named <code>happypanda_debug.log</code></li>
 <li>Now you try to reproduce the error/bug</li>
 </ol>
