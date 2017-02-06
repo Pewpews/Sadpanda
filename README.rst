@@ -29,10 +29,10 @@ Screenshots
 .. image:: https://github.com/Pewpews/happypanda/raw/master/misc/screenshot1.png
     :width: 100%
     :align: center
-.. image:: https://github.com/Pewpews/happypanda/raw/master/misc/screenshot1.png
+.. image:: https://github.com/Pewpews/happypanda/raw/master/misc/screenshot2.png
     :width: 100%
     :align: center
-.. image:: https://github.com/Pewpews/happypanda/raw/master/misc/screenshot1.png
+.. image:: https://github.com/Pewpews/happypanda/raw/master/misc/screenshot3.png
     :width: 100%
     :align: center
 
