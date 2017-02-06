@@ -32,6 +32,9 @@ if sys.platform.startswith('darwin'):
     OS_NAME = "darwin"
 elif os.name == 'nt':
     OS_NAME = "windows"
+    import ctypes
+    myappid = 'Pewpews.Happypanda.1.0'
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 elif os.name == 'posix':
     OS_NAME = "linux"
 
