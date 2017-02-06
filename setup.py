@@ -43,6 +43,7 @@ setup(
         'pillow',
         'python-dateutil',
         'QtAwesome',
+        'appdirs',
     ],
     entry_points={
         'console_scripts': [

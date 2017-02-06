@@ -11,13 +11,13 @@ import pytest
 )
 def test_init_db(path_isfile_retval, check_dbv_retval, path_is_dbc_path):
     """test sqlite generation and db creation"""
-    with mock.patch('version.database.db.db_constants') as m_dbc, \
-            mock.patch('version.database.db.sqlite3') as m_sl3, \
-            mock.patch('version.database.db.os') as m_os, \
-            mock.patch('version.database.db.create_db_path') as m_create_db_path, \
-            mock.patch('version.database.db.check_db_version') \
+    with mock.patch('happypanda.database.db.db_constants') as m_dbc, \
+            mock.patch('happypanda.database.db.sqlite3') as m_sl3, \
+            mock.patch('happypanda.database.db.os') as m_os, \
+            mock.patch('happypanda.database.db.create_db_path') as m_create_db_path, \
+            mock.patch('happypanda.database.db.check_db_version') \
             as m_check_dbv:
-        from version.database import db
+        from happypanda.database import db
         m_os.path.isfile.return_value = path_isfile_retval
         m_check_dbv.return_value = check_dbv_retval
         if path_is_dbc_path:
@@ -46,9 +46,9 @@ def test_init_db(path_isfile_retval, check_dbv_retval, path_is_dbc_path):
                 mock.call.connect(path, check_same_thread=False),
                 mock.call.connect().cursor(),
                 mock.call.connect().cursor().execute(
-                    'CREATE TABLE IF NOT EXISTS version(version REAL)'),
+                    'CREATE TABLE IF NOT EXISTS happypanda(happypanda REAL)'),
                 mock.call.connect().cursor().execute(
-                    'INSERT INTO version(version) VALUES(?)',
+                    'INSERT INTO happypanda(happypanda) VALUES(?)',
                     (m_dbc.CURRENT_DB_VERSION,)
                 ),
                 mock.call.connect().cursor().executescript(db.STRUCTURE_SCRIPT),
