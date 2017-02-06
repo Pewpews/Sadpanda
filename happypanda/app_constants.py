@@ -38,7 +38,12 @@ elif os.name == 'posix':
 APP_RESTART_CODE = 0
 
 get = settings.get
-static_dir = os.path.join(db_constants.CONTENT_DIR, '../res' if not args.home and os.name == 'posix' else 'res')
+
+static_dir = os.path.join(db_constants.CONTENT_DIR, 'res')
+
+if args.home and os.path.isdir(static_dir) is False or os.path.isdir(static_dir) is False:
+    static_dir = os.path.join(os.path.abspath(__file__), 'res').replace("app_constants.py\\", "")
+
 bin_dir = os.path.join(db_constants.CONTENT_DIR, 'bin')
 temp_dir = os.path.join(db_constants.CONTENT_DIR, 'temp')
 

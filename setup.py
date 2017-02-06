@@ -47,7 +47,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'happypanda=happypanda.main:main',
+            'happypanda=happypanda.__main__:main',
         ],
     },
 )

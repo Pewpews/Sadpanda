@@ -13,6 +13,7 @@ happypanda/dist
 settings.json
 build
 dist
+happypanda.egg-info
 *.ini
 *.swp
 .DS_Store
