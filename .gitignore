@@ -13,7 +13,6 @@ happypanda/dist
 settings.json
 build
 dist
-Happypanda
 *.ini
 *.swp
 .DS_Store
