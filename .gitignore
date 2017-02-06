@@ -6,15 +6,14 @@
 *.pyproj
 *Qt*
 *__pycache__*
-version/build
-version/dist
+happypanda/build
+happypanda/dist
 *.sln
 *Thumbs.db
 settings.json
 build
 dist
 Happypanda
-setup.py
 *.ini
 *.swp
 .DS_Store
@@ -185,7 +184,7 @@ node_modules/
 Generated_Code/
 
 # Backup & report files from converting an old project file
-# to a newer Visual Studio version. Backup files are not needed,
+# to a newer Visual Studio happypanda. Backup files are not needed,
 # because we have git ;-)
 _UpgradeReport_Files/
 Backup*/
@@ -205,16 +204,16 @@ UpgradeLog*.htm
 FakesAssemblies/
 /db
 /thumbnails
-/version/gui/static/gallery_def_ico.ico
-/version/gui/static/gallery_ext_ico.ico
+/happypanda/gui/static/gallery_def_ico.ico
+/happypanda/gui/static/gallery_ext_ico.ico
 *.pyperf
 /temp
 /main.build
 /main.dist
-/version/db
+/happypanda/db
 /test_g.zip
-/version/temp
-/version/modeltest.py
+/happypanda/temp
+/happypanda/modeltest.py
 /[Yamatogawa] Power Play!.zip
 /test.zip
 /test.py
@@ -235,9 +234,9 @@ FakesAssemblies/
 /[Yamatogawa] Power Play!.zip
 /[Yamatogawa] Power Play!.zip
 *.zip
-/res/typicons
-/res/gallery_ext_ico.ico
-/res/sample.png
+/happypanda/res/typicons
+/happypanda/res/gallery_ext_ico.ico
+/happypanda/res/sample.png
 *.hpdb
 /plugins
 /compilerconfig.json

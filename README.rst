@@ -1,0 +1,85 @@
+    Note: Work on this program has been halted in favor of its successor
+    HappypandaX (bugs and such won't be fixed)
+
+This is a cross platform manga/doujinshi manager with namespace & tag
+support.
+
+Features
+========
+
+-  Portable, self-contained in folder and cross-platform
+-  Low memory footprint
+-  Advanced gallery search with regex support (`learn more about it
+   here <https://github.com/Pewpews/happypanda/wiki/Gallery-Searching>`__)
+-  Gallery tagging: userdefined namespaces and tags
+-  Gallery metadata fetching from the web (supports various sources)
+-  Gallery downloading from the web (supports various sources) \*
+-  Folder monitoring that'll notify you of filesystem changes
+-  Multiple ways of adding galleries to make it as convienient as
+   possible!
+-  Recursive directory/archive scanning
+-  Supports ZIP/CBZ, RAR/CBR and directories with loose files
+-  Very customizable
+-  And lots more...
+
+\* Gallery downloading from E-Hentai costs Credits/GP
+
+Screenshots
+===========
+
+| 
+| 
+| 
+
+How to install and run
+======================
+
+Windows
+^^^^^^^
+
+#. Download the archive from
+   `releases <https://github.com/Pewpews/happypanda/releases>`__
+#. Extract the archive to its own folder
+#. Find Happypanda.exe and double click on it!
+
+Mac and Linux
+^^^^^^^^^^^^^
+
+see `INSTALL.md <INSTALL.md>`__
+
+Updating
+========
+
+| Overwrite your previous installation.
+| More info in the `wiki <https://github.com/Pewpews/happypanda/wiki>`__
+
+Misc.
+=====
+
+For general documentation (how to add galleries and usage of the
+search), check the
+`wiki <https://github.com/Pewpews/happypanda/wiki>`__.
+
+People wanting to import galleries from the Pururin database torrent
+should find `this <https://github.com/Exedge/Convertor>`__ useful.
+
+Dependencies
+============
+
+-  Qt5 (Install this first) >= 5.4
+-  PyQt5 (pip)
+-  requests (pip)
+-  beautifulsoup4 (pip)
+-  watchdog (pip)
+-  scandir (pip)
+-  rarfile (pip)
+-  robobrowser (pip)
+-  Send2Trash (pip)
+-  Pillow (pip) or PIL
+-  python-dateutil (pip)
+-  QtAwesome (pip)
+
+Contributing
+============
+
+Please refer to ``HappypandaX`` instead.
