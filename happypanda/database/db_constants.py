@@ -14,7 +14,7 @@
 
 import os
 
-from appdirs import *
+from appdirs import user_data_dir
 
 from happypanda.database.arguments import args
 
