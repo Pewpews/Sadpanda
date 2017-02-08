@@ -13,31 +13,33 @@
 #"""
 
 import datetime
+import functools
+import hashlib
+import json
+import logging
 import os
+import re
+import shutil
 import subprocess
 import sys
-import logging
-import zipfile
-import hashlib
-import shutil
-import uuid
-import re
-import scandir
-import rarfile
-import json
-import send2trash
-import functools
 import time
+import uuid
+import zipfile
 
-from PyQt5.QtGui import QImage, qRgba
-from PIL import Image,ImageChops
+import rarfile
+import scandir
+import send2trash
+from PIL import (
+    Image,
+    ImageChops
+)
+from PyQt5.QtGui import (
+    QImage,
+    qRgba
+)
 
-try:
-    import app_constants
-    from database import db_constants
-except:
-    from . import app_constants
-    from .database import db_constants
+from happypanda import app_constants
+from happypanda.database import db_constants
 
 log = logging.getLogger(__name__)
 log_i = log.info

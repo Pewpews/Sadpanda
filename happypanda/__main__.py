@@ -12,54 +12,47 @@
 #along with Happypanda.  If not, see <http://www.gnu.org/licenses/>.
 #"""
 
-import sys, logging, logging.handlers, os, argparse, platform, scandir
+import logging
+import logging.handlers
+import os
+import platform
+import sys
 import traceback
 
-from PyQt5.QtWidgets import QApplication
+import scandir
 from PyQt5.QtCore import QFile, Qt
-from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtWidgets import QApplication
 
-from database import db, db_constants
-import app
-import app_constants
-import gallerydb
-import utils
+from happypanda import app
+from happypanda import app_constants
+from happypanda import utils
+from happypanda.database.arguments import args
+from happypanda.database import (
+    db,
+    db_constants
+)
 
-#IMPORTANT STUFF
+
 def start(test=False):
     app_constants.APP_RESTART_CODE = -123456789
 
-    if os.name == 'posix':
-        main_path = os.path.dirname(os.path.realpath(__file__))
-        log_path = os.path.join(main_path, 'happypanda.log')
-        debug_log_path = os.path.join(main_path, 'happypanda_debug.log')
-    else:
-        log_path = 'happypanda.log'
-        debug_log_path = 'happypanda_debug.log'
+    log_path = os.path.join(db_constants.CONTENT_DIR, 'happypanda.log')
+    debug_log_path = os.path.join(db_constants.CONTENT_DIR, 'happypanda_debug.log')
+
     if os.path.exists('cacert.pem'):
         os.environ["REQUESTS_CA_BUNDLE"] = os.path.join(os.getcwd(), "cacert.pem")
 
-    parser = argparse.ArgumentParser(prog='Happypanda',
-                                  description='A manga/doujinshi manager with tagging support')
-    parser.add_argument('-d', '--debug', action='store_true',
-                     help='happypanda_debug_log.log will be created in main directory')
-    parser.add_argument('-v', '--version', action='version',
-                     version='Happypanda v{}'.format(app_constants.vs))
-    parser.add_argument('-e', '--exceptions', action='store_true',
-                     help='Disable custom excepthook')
-    parser.add_argument('-x', '--dev', action='store_true',
-                     help='Development Switch')
-
-    args = parser.parse_args()
     log_handlers = []
     log_level = logging.INFO
+
     if args.dev:
         log_handlers.append(logging.StreamHandler())
+
     if args.debug:
-        print("happypanda_debug.log created at {}".format(os.getcwd()))
+        print("happypanda_debug.log created at {}".format(debug_log_path))
         # create log
         try:
-            with open(debug_log_path, 'x') as f:
+            with open(debug_log_path, 'x'):
                 pass
         except FileExistsError:
             pass
@@ -69,20 +62,22 @@ def start(test=False):
         app_constants.DEBUG = True
     else:
         try:
-            with open(log_path, 'x') as f:
+            with open(log_path, 'x'):
                 pass
-        except FileExistsError: pass
-        log_handlers.append(logging.handlers.RotatingFileHandler(
-            log_path, maxBytes=1000000*10, encoding='utf-8', backupCount=2))
+        except FileExistsError:
+            pass
+
+        log_handlers.append(logging.handlers.RotatingFileHandler(log_path, maxBytes=1000000*10, encoding='utf-8',
+                                                                 backupCount=2))
 
     # Fix for logging not working
     # clear the handlers first before adding these custom handler
     # http://stackoverflow.com/a/15167862
     logging.getLogger('').handlers = []
     logging.basicConfig(level=log_level,
-                    format='%(asctime)-8s %(levelname)-6s %(name)-6s %(message)s',
-                    datefmt='%d-%m %H:%M',
-                    handlers=tuple(log_handlers))
+                        format='%(asctime)-8s %(levelname)-6s %(name)-6s %(message)s',
+                        datefmt='%d-%m %H:%M',
+                        handlers=tuple(log_handlers))
 
     log = logging.getLogger(__name__)
     log_i = log.info
@@ -103,10 +98,9 @@ def start(test=False):
         log_i("Enabling high DPI display support")
         os.environ.putenv("QT_DEVICE_PIXEL_RATIO", "auto")
 
-    effects = [Qt.UI_AnimateCombo, Qt.UI_FadeMenu, Qt.UI_AnimateMenu,
-            Qt.UI_AnimateTooltip, Qt.UI_FadeTooltip]
+    effects = [Qt.UI_AnimateCombo, Qt.UI_FadeMenu, Qt.UI_AnimateMenu, Qt.UI_AnimateTooltip, Qt.UI_FadeTooltip]
     for effect in effects:
-        QApplication.setEffectEnabled(effect)
+        QApplication.setEffectEnabled(effect, True)
 
     application = QApplication(sys.argv)
     application.setOrganizationName('Pewpews')
@@ -151,44 +145,12 @@ def start(test=False):
 
     def start_main_window(conn):
         db.DBBase._DB_CONN = conn
-        #if args.test:
-        #	import threading, time
-        #	ser_list = []
-        #	for x in range(5000):
-        #		s = gallerydb.gallery()
-        #		s.profile = app_constants.NO_IMAGE_PATH
-        #		s.title = 'Test {}'.format(x)
-        #		s.artist = 'Author {}'.format(x)
-        #		s.path = app_constants.static_dir
-        #		s.type = 'Test'
-        #		s.language = 'English'
-        #		s.info = 'I am number {}'.format(x)
-        #		ser_list.append(s)
 
-        #	done = False
-        #	thread_list = []
-        #	i = 0
-        #	while not done:
-        #		try:
-        #			if threading.active_count() > 5000:
-            #				thread_list = []
-        #				done = True
-        #			else:
-        #				thread_list.append(
-        #					threading.Thread(target=gallerydb.galleryDB.add_gallery,
-        #					  args=(ser_list[i],)))
-        #				thread_list[i].start()
-        #				i += 1
-        #				print(i)
-        #				print('Threads running: {}'.format(threading.activeCount()))
-        #		except IndexError:
-        #			done = True
-
-        WINDOW = app.AppWindow(args.exceptions)
+        window = app.AppWindow(args.exceptions)
 
         # styling
         d_style = app_constants.default_stylesheet_path
-        u_style =  app_constants.user_stylesheet_path
+        u_style = app_constants.user_stylesheet_path
 
         if len(u_style) is not 0:
             try:
@@ -218,7 +180,7 @@ def start(test=False):
         log_d('Create temp: OK')
 
         if test:
-            return application, WINDOW
+            return application, window
 
         return application.exec_()
 
@@ -231,13 +193,13 @@ def start(test=False):
         msg_box.setWindowIcon(QIcon(app_constants.APP_ICO_PATH))
         msg_box.setText('Incompatible database!')
         msg_box.setInformativeText("Do you want to upgrade to newest version?" +
-                             " It shouldn't take more than a second. Don't start a new instance!")
+                                   " It shouldn't take more than a second. Don't start a new instance!")
         msg_box.setIcon(QMessageBox.Critical)
         msg_box.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
         msg_box.setDefaultButton(QMessageBox.Yes)
+
         if msg_box.exec() == QMessageBox.Yes:
             utils.backup_database()
-            import threading
             db_p = db_constants.DB_PATH
             db.add_db_revisions(db_p)
             conn = db.init_db()
@@ -252,8 +214,12 @@ def start(test=False):
     else:
         return db_upgrade()
 
-if __name__ == '__main__':
+
+def main():
     current_exit_code = 0
     while current_exit_code == app_constants.APP_RESTART_CODE:
         current_exit_code = start()
     sys.exit(current_exit_code)
+
+if __name__ == '__main__':
+    main()

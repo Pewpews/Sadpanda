@@ -1,8 +1,13 @@
 """LineEdit for color input."""
-import sys
 import logging
+import sys
 
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import QRegularExpression
+from PyQt5.QtGui import (
+    QColor,
+    QRegularExpressionValidator,
+)
 from PyQt5.QtWidgets import (
     QLineEdit,
     QHBoxLayout,
@@ -10,13 +15,7 @@ from PyQt5.QtWidgets import (
     QWidget,
     QColorDialog
 )
-from PyQt5.QtGui import (
-    QColor,
-    QRegularExpressionValidator,
-)
-from PyQt5.QtCore import (
-    QRegularExpression,
-)
+
 log = logging.getLogger(__name__)
 log_d = log.debug
 

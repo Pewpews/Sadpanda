@@ -12,10 +12,12 @@
 #along with Happypanda.  If not, see <http://www.gnu.org/licenses/>.
 #"""
 
-import os, sqlite3, threading, queue
-import logging, time, shutil
+import logging
+import os
+import sqlite3
 
-from . import db_constants
+from happypanda.database import db_constants
+
 log = logging.getLogger(__name__)
 log_i = log.info
 log_d = log.debug
@@ -25,14 +27,14 @@ log_c = log.critical
 
 def hashes_sql(cols=False):
     col_list = [
-    'hash_id INTEGER PRIMARY KEY',
-    'hash BLOB',
-    'series_id INTEGER',
-    'chapter_id INTEGER',
-    'page INTEGER',
-    'FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE',
-    'FOREIGN KEY(chapter_id) REFERENCES chapters(chapter_id) ON DELETE CASCADE',
-    'UNIQUE(hash, series_id, chapter_id, page)'
+        'hash_id INTEGER PRIMARY KEY',
+        'hash BLOB',
+        'series_id INTEGER',
+        'chapter_id INTEGER',
+        'page INTEGER',
+        'FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE',
+        'FOREIGN KEY(chapter_id) REFERENCES chapters(chapter_id) ON DELETE CASCADE',
+        'UNIQUE(hash, series_id, chapter_id, page)'
     ]
 
     sql = "CREATE TABLE IF NOT EXISTS hashes({});".format(",".join(col_list))
@@ -40,6 +42,7 @@ def hashes_sql(cols=False):
     if cols:
         return sql, col_list
     return sql
+
 
 def series_sql(cols=False):
     col_list = [
@@ -64,13 +67,14 @@ def series_sql(cols=False):
         'exed INTEGER NOT NULL DEFAULT 0',
         'db_v REAL',
         'view INTEGER DEFAULT 1'
-        ]
+    ]
 
     sql = "CREATE TABLE IF NOT EXISTS series({});".format(",".join(col_list))
 
     if cols:
         return sql, col_list
     return sql
+
 
 def chapters_sql(cols=False):
     col_list = [
@@ -82,7 +86,7 @@ def chapters_sql(cols=False):
         'pages INTEGER',
         'in_archive INTEGER',
         'FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE'
-        ]
+    ]
 
     sql = "CREATE TABLE IF NOT EXISTS chapters({});".format(",".join(col_list))
 
@@ -90,11 +94,12 @@ def chapters_sql(cols=False):
         return sql, col_list
     return sql
 
+
 def namespaces_sql(cols=False):
     col_list = [
         'namespace_id INTEGER PRIMARY KEY',
         'namespace TEXT NOT NULL UNIQUE'
-        ]
+    ]
 
     sql = "CREATE TABLE IF NOT EXISTS namespaces({});".format(",".join(col_list))
 
@@ -102,17 +107,19 @@ def namespaces_sql(cols=False):
         return sql, col_list
     return sql
 
+
 def tags_sql(cols=False):
     col_list = [
         'tag_id INTEGER PRIMARY KEY',
         'tag TEXT NOT NULL UNIQUE'
-        ]
+    ]
 
     sql = "CREATE TABLE IF NOT EXISTS tags({});".format(",".join(col_list))
 
     if cols:
         return sql, col_list
     return sql
+
 
 def tags_mappings_sql(cols=False):
     col_list = [
@@ -122,13 +129,14 @@ def tags_mappings_sql(cols=False):
         'FOREIGN KEY(namespace_id) REFERENCES namespaces(namespace_id) ON DELETE CASCADE',
         'FOREIGN KEY(tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE',
         'UNIQUE(namespace_id, tag_id)'
-        ]
+    ]
 
     sql = "CREATE TABLE IF NOT EXISTS tags_mappings({});".format(",".join(col_list))
 
     if cols:
         return sql, col_list
     return sql
+
 
 def series_tags_mappings_sql(cols=False):
     col_list = [
@@ -137,13 +145,14 @@ def series_tags_mappings_sql(cols=False):
         'FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE',
         'FOREIGN KEY(tags_mappings_id) REFERENCES tags_mappings(tags_mappings_id) ON DELETE CASCADE',
         'UNIQUE(series_id, tags_mappings_id)'
-        ]
+    ]
 
     sql = "CREATE TABLE IF NOT EXISTS series_tags_map({});".format(",".join(col_list))
 
     if cols:
         return sql, col_list
     return sql
+
 
 def list_sql(cols=False):
     col_list = [
@@ -156,13 +165,14 @@ def list_sql(cols=False):
         "regex INTEGER DEFAULT 0",
         "l_case INTEGER DEFAULT 0",
         "strict INTEGER DEFAULT 0",
-        ]
+    ]
 
     sql = "CREATE TABLE IF NOT EXISTS list({});".format(",".join(col_list))
 
     if cols:
         return sql, col_list
     return sql
+
 
 def series_list_map_sql(cols=False):
     col_list = [
@@ -171,7 +181,7 @@ def series_list_map_sql(cols=False):
         'FOREIGN KEY(list_id) REFERENCES list(list_id) ON DELETE CASCADE',
         'FOREIGN KEY(series_id) REFERENCES series(series_id) ON DELETE CASCADE',
         'UNIQUE(list_id, series_id)'
-        ]
+    ]
 
     sql = "CREATE TABLE IF NOT EXISTS series_list_map({});".format(",".join(col_list))
 
@@ -179,8 +189,10 @@ def series_list_map_sql(cols=False):
         return sql, col_list
     return sql
 
-STRUCTURE_SCRIPT = series_sql()+chapters_sql()+namespaces_sql()+tags_sql()+tags_mappings_sql()+\
-    series_tags_mappings_sql()+hashes_sql()+list_sql()+series_list_map_sql()
+
+STRUCTURE_SCRIPT = series_sql() + chapters_sql() + namespaces_sql() + tags_sql() + tags_mappings_sql() + \
+                   series_tags_mappings_sql() + hashes_sql() + list_sql() + series_list_map_sql()
+
 
 def global_db_convert(conn):
     """
@@ -198,7 +210,7 @@ def global_db_convert(conn):
     hashes, hashes_cols = hashes_sql(True)
     _list, list_cols = list_sql(True)
     series_list_map, series_list_map_cols = series_list_map_sql(True)
-    
+
     t_d = {}
     t_d['series'] = series_cols
     t_d['chapters'] = chapters_cols
@@ -226,6 +238,7 @@ def global_db_convert(conn):
     log_d('Commited DB changes')
     return c
 
+
 def add_db_revisions(old_db):
     """
     Adds specific DB revisions items.
@@ -243,6 +256,7 @@ def add_db_revisions(old_db):
     conn.commit()
     conn.close()
     return
+
 
 def create_db_path(db_path=db_constants.DB_PATH):
     head = os.path.split(db_path)[0]
@@ -265,11 +279,11 @@ def check_db_version(conn):
         msg = "Incompatible database"
         log_c(msg)
         log_d('Local database version: {}\nProgram database version:{}'.format(db_vs[0],
-                                                                         db_constants.CURRENT_DB_VERSION))
-        #ErrorQueue.put(msg)
+                                                                               db_constants.CURRENT_DB_VERSION))
+        # ErrorQueue.put(msg)
         return False
     return True
-    
+
 
 def init_db(path=db_constants.DB_PATH):
     """Initialises the DB. Returns a sqlite3 connection,
@@ -309,11 +323,12 @@ def init_db(path=db_constants.DB_PATH):
     conn.execute("PRAGMA foreign_keys = on")
     return conn
 
+
 class DBBase:
     "The base DB class. _DB_CONN should be set at runtime on startup"
     _DB_CONN = None
     _AUTO_COMMIT = True
-    _STATE = {'active':False}
+    _STATE = {'active': False}
 
     def __init__(self, **kwargs):
         pass
@@ -325,7 +340,7 @@ class DBBase:
             cls._AUTO_COMMIT = False
             cls.execute(cls, "BEGIN TRANSACTION")
             cls._STATE['active'] = True
-        #print("STARTED DB OPTIMIZE")
+            # print("STARTED DB OPTIMIZE")
 
     @classmethod
     def end(cls):
@@ -337,7 +352,7 @@ class DBBase:
                 pass
             cls._AUTO_COMMIT = True
             cls._STATE['active'] = False
-        #print("ENDED DB OPTIMIZE")
+            # print("ENDED DB OPTIMIZE")
 
     def execute(self, *args):
         "Same as cursor.execute"
@@ -349,11 +364,11 @@ class DBBase:
                 with self._DB_CONN:
                     return self._DB_CONN.execute(*args)
             except sqlite3.InterfaceError:
-                    return self._DB_CONN.execute(*args)
+                return self._DB_CONN.execute(*args)
 
         else:
             return self._DB_CONN.execute(*args)
-    
+
     def executemany(self, *args):
         "Same as cursor.executemany"
         if not self._DB_CONN:
@@ -376,6 +391,7 @@ class DBBase:
     @classmethod
     def close(cls):
         cls._DB_CONN.close()
+
 
 if __name__ == '__main__':
     raise RuntimeError("Unit tests not yet implemented")

@@ -1,10 +1,10 @@
 """test utils module."""
-from unittest import mock
 from itertools import product
+from unittest import mock
 
 import pytest
 
-from version.utils import backup_database
+from happypanda.utils import backup_database
 
 
 @pytest.mark.parametrize(
@@ -16,9 +16,9 @@ def test_run_backup_database(mock_exists_retval, mock_isdir_retval):
     mock_db_path = mock.Mock()
     mock_base_path = mock.Mock()
     mock_name = mock.Mock()
-    with mock.patch('version.utils.os') as mock_os, \
-            mock.patch('version.utils.shutil') as mock_shutil, \
-            mock.patch('version.utils.datetime') as mock_datetime:
+    with mock.patch('happypanda.utils.os') as mock_os, \
+            mock.patch('happypanda.utils.shutil') as mock_shutil, \
+            mock.patch('happypanda.utils.datetime') as mock_datetime:
         mock_datetime.datetime.today.return_value = '2016-10-25 15:42:47.649416'
         mock_os.path.split.return_value = (mock_base_path, mock_name)
         mock_os.path.exists.return_value = mock_exists_retval

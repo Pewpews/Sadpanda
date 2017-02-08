@@ -1,4 +1,5 @@
-﻿#This file is part of Happypanda.
+﻿#"""
+#This file is part of Happypanda.
 #Happypanda is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
 #the Free Software Foundation, either version 2 of the License, or
@@ -9,27 +10,52 @@
 #GNU General Public License for more details.
 #You should have received a copy of the GNU General Public License
 #along with Happypanda.  If not, see <http://www.gnu.org/licenses/>.
-import pickle
+#"""
+
 import logging
+import pickle
 
-from PyQt5.QtWidgets import (QTreeWidget, QTreeWidgetItem, QWidget,
-                             QVBoxLayout, QTabWidget, QAction, QGraphicsScene,
-                             QSizePolicy, QMenu, QAction, QApplication,
-                             QListWidget, QHBoxLayout, QPushButton, QStackedLayout,
-                             QFrame, QSizePolicy, QListView, QFormLayout, QLineEdit,
-                             QLabel, QStyledItemDelegate, QStyleOptionViewItem,
-                             QCheckBox, QButtonGroup, QPlainTextEdit)
-from PyQt5.QtCore import (Qt, QTimer, pyqtSignal, QRect, QSize, QEasingCurve,
-                          QSortFilterProxyModel, QIdentityProxyModel, QModelIndex,
-                          QPointF, QRectF, QObject)
-from PyQt5.QtGui import (QIcon, QStandardItem, QFont, QPainter, QColor, QBrush,
-                         QPixmap, QPalette)
+from PyQt5.QtCore import (
+    Qt,
+    pyqtSignal,
+    QSize,
+    QEasingCurve,
+    QSortFilterProxyModel,
+    QIdentityProxyModel,
+    QObject
+)
+from PyQt5.QtGui import (
+    QIcon,
+    QFont
+)
+from PyQt5.QtWidgets import (
+    QTreeWidget,
+    QTreeWidgetItem,
+    QWidget,
+    QVBoxLayout,
+    QTabWidget,
+    QMenu,
+    QApplication,
+    QListWidget,
+    QHBoxLayout,
+    QPushButton,
+    QStackedLayout,
+    QFrame,
+    QSizePolicy,
+    QListView,
+    QFormLayout,
+    QLineEdit,
+    QStyledItemDelegate,
+    QCheckBox,
+    QButtonGroup,
+    QPlainTextEdit
+)
 
-import gallerydb
-import app_constants
-import utils
-import misc
-import gallery
+from happypanda import gallerydb
+from happypanda import app_constants
+from happypanda import utils
+from happypanda import misc
+from happypanda import gallery
 
 log = logging.getLogger(__name__)
 log_i = log.info

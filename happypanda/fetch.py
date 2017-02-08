@@ -12,16 +12,29 @@
 #along with Happypanda.  If not, see <http://www.gnu.org/licenses/>.
 #"""
 
-import os, time, logging, uuid, random, queue, scandir
-import re as regex
+import logging
+import os
+import queue
+import random
+import scandir
+import time
 
-from PyQt5.QtCore import QObject, pyqtSignal # need this for interaction with main thread
+# need this for interaction with main thread
+from PyQt5.QtCore import (
+    QObject,
+    pyqtSignal
+)
 
-from gallerydb import Gallery, GalleryDB, HashDB, execute
-import app_constants
-import pewnet
-import settings
-import utils
+from happypanda import app_constants
+from happypanda import pewnet
+from happypanda import settings
+from happypanda import utils
+from happypanda.gallerydb import (
+    Gallery,
+    GalleryDB,
+    HashDB,
+    execute
+)
 
 """This file contains functions to fetch gallery data"""
 

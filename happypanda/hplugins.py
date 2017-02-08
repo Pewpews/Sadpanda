@@ -1,8 +1,5 @@
 import logging
-import os
 import uuid
-import threading
-import sys
 
 from PyQt5.QtCore import pyqtWrapperType
 
