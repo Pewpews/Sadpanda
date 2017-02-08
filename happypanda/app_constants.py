@@ -242,7 +242,10 @@ USE_GALLERY_LINK = get(True, 'Web', 'use gallery link', bool)
 USE_JPN_TITLE = get(False, 'Web', 'use jpn title', bool)
 CONTINUE_AUTO_METADATA_FETCHER = get(True, 'Web', 'continue auto metadata fetcher', bool)
 HEN_DOWNLOAD_TYPE = get(DOWNLOAD_TYPE_ARCHIVE, 'Web', 'hen download type', int)
-DOWNLOAD_DIRECTORY = get('downloads', 'Web', 'download directory', str)
+if args.home:
+    DOWNLOAD_DIRECTORY = get('{}/downloads'.format(db_constants.CONTENT_DIR), 'Web', 'download directory', str)
+else:
+    DOWNLOAD_DIRECTORY = get('downloads', 'Web', 'download directory', str)
 TORRENT_CLIENT = get('', 'Web', 'torrent client', str)
 HEN_LIST = get(['chaikahen'], 'Web', 'hen list', list)
 DOWNLOAD_GALLERY_TO_LIB = get(False, 'Web', 'download galleries to library', bool)
