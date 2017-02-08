@@ -1,20 +1,43 @@
-import queue, os, threading, random, logging, time, scandir
+import logging
+import os
+import threading
 from datetime import datetime
 
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QDesktopWidget, QGroupBox,
-                             QHBoxLayout, QFormLayout, QLabel, QLineEdit,
-                             QPushButton, QProgressBar, QTextEdit, QComboBox,
-                             QDateEdit, QFileDialog, QMessageBox, QScrollArea,
-                             QCheckBox, QSizePolicy, QSpinBox)
-from PyQt5.QtCore import (pyqtSignal, Qt, QPoint, QDate, QThread, QTimer)
+from PyQt5.QtCore import (
+    Qt,
+    QDate,
+    QThread,
+    QTimer
+)
+from PyQt5.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QDesktopWidget,
+    QGroupBox,
+    QHBoxLayout,
+    QFormLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QProgressBar,
+    QTextEdit,
+    QComboBox,
+    QDateEdit,
+    QFileDialog,
+    QMessageBox,
+    QScrollArea,
+    QCheckBox,
+    QSizePolicy,
+    QSpinBox
+)
 
-import app_constants
-import utils
-import gallerydb
-import fetch
-import misc
-import database
-import settings
+from happypanda import app_constants
+from happypanda import utils
+from happypanda import gallerydb
+from happypanda import fetch
+from happypanda import misc
+from happypanda import database
+from happypanda import settings
 
 log = logging.getLogger(__name__)
 log_i = log.info

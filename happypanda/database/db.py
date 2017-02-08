@@ -2,8 +2,8 @@
 #This file is part of Happypanda.
 #Happypanda is free software: you can redistribute it and/or modify
 #it under the terms of the GNU General Public License as published by
-#the Free Software Foundation, either version 2 of the License, or
-#any later version.
+#the Free Software Foundation, either happypanda 2 of the License, or
+#any later happypanda.
 #Happypanda is distributed in the hope that it will be useful,
 #but WITHOUT ANY WARRANTY; without even the implied warranty of
 #MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -12,10 +12,12 @@
 #along with Happypanda.  If not, see <http://www.gnu.org/licenses/>.
 #"""
 
-import os, sqlite3, threading, queue
-import logging, time, shutil
+import logging
+import os
+import sqlite3
 
-from . import db_constants
+from happypanda.database import db_constants
+
 log = logging.getLogger(__name__)
 log_i = log.info
 log_d = log.debug
@@ -278,12 +280,12 @@ def init_db(path=db_constants.DB_PATH):
 
     def db_layout(cursor):
         c = cursor
-        # version
+        # happypanda
         c.execute("""
-        CREATE TABLE IF NOT EXISTS version(version REAL)
+        CREATE TABLE IF NOT EXISTS happypanda(happypanda REAL)
         """)
 
-        c.execute("""INSERT INTO version(version) VALUES(?)""", (db_constants.CURRENT_DB_VERSION,))
+        c.execute("""INSERT INTO happypanda(happypanda) VALUES(?)""", (db_constants.CURRENT_DB_VERSION,))
         log_i("Constructing database layout")
         log_d("Database Layout:\n\t{}".format(STRUCTURE_SCRIPT))
         c.executescript(STRUCTURE_SCRIPT)

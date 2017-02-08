@@ -12,46 +12,64 @@
 #along with Happypanda.  If not, see <http://www.gnu.org/licenses/>.
 #"""
 
-import threading
-import logging
-import os
-import math
-import functools
-import random
-import datetime
-import pickle
 import enum
-import time
-import re as regex
+import logging
+import math
+import pickle
+import random
 
-from PyQt5.QtCore import (Qt, QAbstractListModel, QModelIndex, QVariant,
-                          QSize, QRect, QEvent, pyqtSignal, QThread,
-                          QTimer, QPointF, QSortFilterProxyModel,
-                          QAbstractTableModel, QItemSelectionModel,
-                          QPoint, QRectF, QDate, QDateTime, QObject,
-                          QEvent, QSizeF, QMimeData, QByteArray, QTime)
-from PyQt5.QtGui import (QPixmap, QBrush, QColor, QPainter, 
-                         QPen, QTextDocument,
-                         QMouseEvent, QHelpEvent,
-                         QPixmapCache, QCursor, QPalette, QKeyEvent,
-                         QFont, QTextOption, QFontMetrics, QFontMetricsF,
-                         QTextLayout, QPainterPath, QScrollPrepareEvent,
-                         QWheelEvent, QPolygonF, QLinearGradient)
-from PyQt5.QtWidgets import (QListView, QFrame, QLabel,
-                             QStyledItemDelegate, QStyle,
-                             QMenu, QAction, QToolTip, QVBoxLayout,
-                             QSizePolicy, QTableWidget, QScrollArea,
-                             QHBoxLayout, QFormLayout, QDesktopWidget,
-                             QWidget, QHeaderView, QTableView, QApplication,
-                             QMessageBox, QActionGroup, QScroller, QStackedLayout)
+from PyQt5.QtCore import (
+    Qt,
+    QModelIndex,
+    QVariant,
+    QSize,
+    QRect,
+    pyqtSignal,
+    QTimer,
+    QPointF,
+    QSortFilterProxyModel,
+    QAbstractTableModel,
+    QPoint,
+    QRectF,
+    QDateTime,
+    QObject,
+    QMimeData,
+    QByteArray,
+    QTime
+)
+from PyQt5.QtGui import (
+    QPixmap,
+    QBrush,
+    QColor,
+    QPainter,
+    QPen,
+    QTextDocument,
+    QPixmapCache,
+    QFont,
+    QTextOption,
+    QFontMetrics,
+    QPainterPath,
+    QPolygonF,
+    QLinearGradient
+)
+from PyQt5.QtWidgets import (
+    QListView,
+    QStyledItemDelegate,
+    QStyle,
+    QWidget,
+    QHeaderView,
+    QTableView,
+    QMessageBox,
+    QScroller,
+    QStackedLayout
+)
 
-from executors import Executors
-import gallerydb
-import app_constants
-import misc
-import gallerydialog
-import io_misc
-import utils
+from happypanda import gallerydb
+from happypanda import app_constants
+from happypanda import misc
+from happypanda import gallerydialog
+from happypanda import utils
+from happypanda.executors import Executors
 
 log = logging.getLogger(__name__)
 log_i = log.info

@@ -1,24 +1,54 @@
-﻿import logging, os, sys
+﻿import logging
+import os
+import sys
 
-from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QListWidget, QWidget,
-                             QListWidgetItem, QStackedLayout, QPushButton,
-                             QLabel, QTabWidget, QLineEdit, QGroupBox, QFormLayout,
-                             QCheckBox, QRadioButton, QSpinBox, QSizePolicy,
-                             QScrollArea, QFontDialog, QMessageBox, QComboBox,
-                             QFileDialog, QSlider)
-from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QPalette, QPixmapCache
+from PyQt5.QtCore import (
+    pyqtSignal,
+    Qt
+)
+from PyQt5.QtGui import (
+    QPalette,
+    QPixmapCache
+)
+from PyQt5.QtWidgets import (
+    QVBoxLayout,
+    QHBoxLayout,
+    QListWidget,
+    QWidget,
+    QListWidgetItem,
+    QStackedLayout,
+    QPushButton,
+    QLabel,
+    QTabWidget,
+    QLineEdit,
+    QGroupBox,
+    QFormLayout,
+    QCheckBox,
+    QRadioButton,
+    QSpinBox,
+    QSizePolicy,
+    QScrollArea,
+    QFontDialog,
+    QMessageBox,
+    QComboBox,
+    QFileDialog,
+    QSlider
+)
 
-from color_line_edit import ColorLineEdit
-from misc import FlowLayout, Spacer, PathLineEdit, AppDialog, Line
-import misc
-import settings
-import app_constants
-import misc_db
-import gallerydb
-import utils
-import io_misc
-import pewnet
+from happypanda import misc
+from happypanda import settings
+from happypanda import app_constants
+from happypanda import gallerydb
+from happypanda import utils
+from happypanda import io_misc
+from happypanda import pewnet
+from happypanda.color_line_edit import ColorLineEdit
+from happypanda.misc import (
+    FlowLayout,
+    Spacer,
+    PathLineEdit,
+    AppDialog
+)
 
 log = logging.getLogger(__name__)
 log_i = log.info

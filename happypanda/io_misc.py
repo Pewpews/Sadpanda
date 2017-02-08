@@ -1,26 +1,50 @@
-﻿import logging, os, json, datetime, random, re, queue
+﻿import datetime
+import json
+import logging
+import os
+import queue
+import re
 
-from watchdog.events import FileSystemEventHandler, DirDeletedEvent
+from PyQt5.QtCore import (
+    Qt,
+    QObject,
+    pyqtSignal,
+    QTimer,
+    QSize
+)
+from PyQt5.QtGui import (
+    QPixmap,
+    QIcon,
+    QColor,
+    QTextOption
+)
+from PyQt5.QtWidgets import (
+    QWidget,
+    QHBoxLayout,
+    QVBoxLayout,
+    QLabel,
+    QPushButton,
+    QMessageBox,
+    QFileDialog,
+    QScrollArea,
+    QLineEdit,
+    QTableWidget,
+    QTableWidgetItem,
+    QPlainTextEdit,
+    QMenu,
+    qApp
+)
+from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
-from threading import Timer
 
-from PyQt5.QtCore import (Qt, QObject, pyqtSignal, QTimer, QSize, QThread)
-from PyQt5.QtGui import (QPixmap, QIcon, QColor, QTextOption, QKeySequence)
-from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QVBoxLayout,
-                             QLabel, QFrame, QPushButton, QMessageBox,
-                             QFileDialog, QScrollArea, QLineEdit,
-                             QFormLayout, QGroupBox, QSizePolicy,
-                             QTableWidget, QTableWidgetItem, QPlainTextEdit,
-                             QShortcut, QMenu, qApp)
-
-import app_constants
-import misc
-import gallerydb
-import utils
-import pewnet
-import settings
-import fetch
-from asm_manager import AsmManager
+from happypanda import app_constants
+from happypanda import misc
+from happypanda import gallerydb
+from happypanda import utils
+from happypanda import pewnet
+from happypanda import settings
+from happypanda import fetch
+from happypanda.asm_manager import AsmManager
 
 log = logging.getLogger(__name__)
 log_i = log.info

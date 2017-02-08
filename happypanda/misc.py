@@ -11,54 +11,96 @@
 #You should have received a copy of the GNU General Public License
 #along with Happypanda.  If not, see <http://www.gnu.org/licenses/>.
 #"""
-import os
-import threading
-import queue
-import time
+
+import functools
 import logging
 import math
-import random
-import functools
+import os
+import threading
+import time
+
 import scandir
-from datetime import datetime
+from PyQt5.QtCore import (
+    Qt,
+    QPoint,
+    pyqtSignal,
+    QTimer,
+    QSize,
+    QRect,
+    QFileInfo,
+    QRectF,
+    QPropertyAnimation,
+    QByteArray,
+    QPointF,
+    QSizeF
+)
+from PyQt5.QtGui import (
+    QTextCursor,
+    QIcon,
+    QMouseEvent,
+    QFont,
+    QPainter,
+    QBrush,
+    QColor,
+    QPen,
+    QPixmap,
+    QPaintEvent,
+    QFontMetrics,
+    QPolygonF,
+    QCursor,
+    QTextOption,
+    QTextLayout,
+    QPalette
+)
+from PyQt5.QtWidgets import (
+    QWidget,
+    QProgressBar,
+    QLabel,
+    QVBoxLayout,
+    QHBoxLayout,
+    QDialog,
+    QLineEdit,
+    QFormLayout,
+    QPushButton,
+    QTextEdit,
+    QDesktopWidget,
+    QMessageBox,
+    QFileDialog,
+    QCompleter,
+    QListWidgetItem,
+    QListWidget,
+    QSizePolicy,
+    QCheckBox,
+    QFrame,
+    QListView,
+    QAbstractItemView,
+    QTreeView,
+    QSpinBox,
+    QAction,
+    QStackedLayout,
+    QLayout,
+    QFileIconProvider,
+    QScrollArea,
+    QSystemTrayIcon,
+    QMenu,
+    QActionGroup,
+    QCommonStyle,
+    QTableWidget,
+    QTableWidgetItem,
+    QTableView,
+    QStyleOption
+)
 
-from PyQt5.QtCore import (Qt, QDate, QPoint, pyqtSignal, QThread,
-                          QTimer, QObject, QSize, QRect, QFileInfo,
-                          QMargins, QPropertyAnimation, QRectF,
-                          QTimeLine, QMargins, QPropertyAnimation, QByteArray,
-                          QPointF, QSizeF, QProcess)
-from PyQt5.QtGui import (QTextCursor, QIcon, QMouseEvent, QFont,
-                         QPixmapCache, QPalette, QPainter, QBrush,
-                         QColor, QPen, QPixmap, QMovie, QPaintEvent, QFontMetrics,
-                         QPolygonF, QRegion, QCursor, QTextOption, QTextLayout,
-                         QPalette)
-from PyQt5.QtWidgets import (QWidget, QProgressBar, QLabel,
-                             QVBoxLayout, QHBoxLayout,
-                             QDialog, QGridLayout, QLineEdit,
-                             QFormLayout, QPushButton, QTextEdit,
-                             QComboBox, QDateEdit, QGroupBox,
-                             QDesktopWidget, QMessageBox, QFileDialog,
-                             QCompleter, QListWidgetItem,
-                             QListWidget, QApplication, QSizePolicy,
-                             QCheckBox, QFrame, QListView,
-                             QAbstractItemView, QTreeView, QSpinBox,
-                             QAction, QStackedLayout, QTabWidget,
-                             QGridLayout, QScrollArea, QLayout, QButtonGroup,
-                             QRadioButton, QFileIconProvider, QFontDialog,
-                             QColorDialog, QScrollArea, QSystemTrayIcon,
-                             QMenu, QGraphicsBlurEffect, QActionGroup,
-                             QCommonStyle, QApplication, QTableWidget,
-                             QTableWidgetItem, QTableView, QSplitter,
-                             QSplitterHandle, QStyledItemDelegate, QStyleOption)
-
-from utils import (tag_to_string, tag_to_dict, title_parser, ARCHIVE_FILES,
-                     ArchiveFile, IMG_FILES)
-from executors import Executors
-import utils
-import app_constants
-import gallerydb
-import fetch
-import settings
+from happypanda import utils
+from happypanda import app_constants
+from happypanda import gallerydb
+from happypanda import settings
+from happypanda.utils import (
+    ARCHIVE_FILES,
+    ArchiveFile,
+    IMG_FILES
+)
+from happypanda.executors import Executors
 
 log = logging.getLogger(__name__)
 log_i = log.info
@@ -1542,7 +1584,7 @@ class AppDialog(BasePopup):
         self.info_lbl.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(self.info_lbl)
         if mode == self.PROGRESS:
-            self.info_lbl.setText("Updating your galleries to newest version...")
+            self.info_lbl.setText("Updating your galleries to newest happypanda...")
             self.info_lbl.setWordWrap(True)
             class progress(QProgressBar):
                 reached_maximum = pyqtSignal()
