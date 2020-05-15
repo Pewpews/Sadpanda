@@ -415,7 +415,15 @@ class ArchiveFile():
             raise app_constants.CreateArchiveFail
 
     def namelist(self):
-        filelist = self.archive.namelist()
+        filelist= []
+        for x in self.archive.namelist():
+            if x.endswith('/'):
+                filelist.append(x)
+            else:
+                filelist.append(x[:(x.rindex('/')+1)])
+                filelist.append(x)
+        seen = set()
+        filelist = [x for x in filelist if x not in seen and not seen.add(x)]
         return filelist
 
     def is_dir(self, name):
